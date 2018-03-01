@@ -1,9 +1,18 @@
 plugins {
     id 'java-gradle-plugin'
+    id "com.gradle.plugin-publish" version "0.9.10"
 }
 
 repositories {
+    mavenLocal()
+    mavenCentral()
     jcenter()
+}
+
+dependencies {
+    compile 'com.sun.xml.ws:jaxws-tools:2.2.10'
+
+    implementation gradleApi()
 }
 
 task wrapper(type: Wrapper) {
