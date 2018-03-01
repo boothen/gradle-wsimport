@@ -15,6 +15,35 @@ dependencies {
     implementation gradleApi()
 }
 
+group = "uk.co.boothen.gradle"
+
+gradlePlugin {
+    plugins {
+        wsImportPlugin {
+            id = "uk.co.boothen.gradle.wsimport"
+            implementationClass = "uk.co.boothen.gradle.wsimport.WsImportPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    website = "https://github.com/boothen/gradle-wsimport"
+    vcsUrl = "https://github.com/boothen/gradle-wsimport"
+    description = "Gradle Plugin to wrap the Ant Task WSImport. Allowing easier configuration."
+
+    plugins {
+        wsImportPlugin {
+            id = "uk.co.boothen.gradle.wsimport"
+            displayName = "Yet another Gradle WsImport plugin"
+        }
+    }
+
+    mavenCoordinates {
+        groupId = project.group.toString()
+        artifactId = project.name
+    }
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '3.5.1'
 }
