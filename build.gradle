@@ -1,0 +1,11 @@
+plugins {
+    id 'java-gradle-plugin'
+}
+
+repositories {
+    jcenter()
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.5.1'
+}
