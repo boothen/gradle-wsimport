@@ -4,6 +4,8 @@ import com.sun.tools.ws.ant.WsImport2;
 
 import org.apache.tools.ant.types.Commandline;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
 public class WsImportRunnable implements Runnable {
@@ -29,13 +31,35 @@ public class WsImportRunnable implements Runnable {
         wsImport2.setXnocompile(wsImportConfiguration.isXnocompile());
         wsImport2.setWsdl(wsImportConfiguration.getSourceRoot() + wsImportConfiguration.getWsdl().getFile());
         wsImport2.setPackage(wsImportConfiguration.getWsdl().getPackageName());
+        if (!"".equals(wsImportConfiguration.getTarget())) {
+            wsImport2.setTarget(wsImportConfiguration.getTarget());
+        }
+
+        wsImport2.setXadditionalHeaders(wsImportConfiguration.isXadditionalHeaders());
+        wsImport2.setxNoAddressingDatabinding(wsImportConfiguration.isxNoAddressingDatabinding());
+        wsImport2.setXdebug(wsImportConfiguration.isXdebug());
+
+        // TODO: Expose some of this properties
+//        wsImport2.setXauthfile();
+//        wsImport2.setCatalog();
+//        wsImport2.setClientjar();
+//        wsImport2.setdisableAuthenticator();
+//        wsImport2.setGenerateJWS();
+//        wsImport2.setImplDestDir();
+//        wsImport2.setImplPortName();
+//        wsImport2.setImplServiceName();
+//        wsImport2.setWsdllocation();
+//        wsImport2.setXUseBaseResourceAndURLToLoadWSDL();
+
         Commandline.Argument xjcarg = wsImport2.createXjcarg();
         for (String wsdlXlcArg : wsImportConfiguration.getWsdl().getXjcargs()) {
             xjcarg.setValue(wsdlXlcArg);
         }
-        for (String binding : wsImportConfiguration.getWsdl().getBindingFiles()) {
-            wsImport2.setBinding(binding);
+
+        for (File binding : wsImportConfiguration.bindingFiles()) {
+            wsImport2.setBinding(binding.getAbsolutePath());
         }
+
         wsImport2.execute();
     }
 }

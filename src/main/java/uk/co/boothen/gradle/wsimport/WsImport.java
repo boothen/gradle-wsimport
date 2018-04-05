@@ -26,7 +26,15 @@ public class WsImport extends DefaultTask {
     private boolean quiet = true;
     private boolean debug;
     private boolean xnocompile;
+    private boolean xadditionalHeaders;
+    private boolean xNoAddressingDatabinding;
+    private boolean xdebug;
+    private String target = "2.2";
+
+
     private List<Wsdl> wsdls = new ArrayList<>();
+
+
     private String wsdlSourceRoot = getProject().getProjectDir().getAbsolutePath() + "/src/main/resources/wsdl/";
     private File generatedSourceRoot = new File(getProject().getBuildDir() + "/generated/src/wsdl/main");
     private File generatedClassesRoot = new File(getProject().getBuildDir() + "/classes/main");
@@ -90,6 +98,42 @@ public class WsImport extends DefaultTask {
     }
 
     @Input
+    public boolean isXadditionalHeaders() {
+        return xadditionalHeaders;
+    }
+
+    public void setXadditionalHeaders(boolean xadditionalHeaders) {
+        this.xadditionalHeaders = xadditionalHeaders;
+    }
+
+    @Input
+    public String getTarget() {
+        return target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
+    }
+
+    @Input
+    public boolean isxNoAddressingDatabinding() {
+        return xNoAddressingDatabinding;
+    }
+
+    public void setxNoAddressingDatabinding(boolean xNoAddressingDatabinding) {
+        this.xNoAddressingDatabinding = xNoAddressingDatabinding;
+    }
+
+    @Input
+    public boolean isXdebug() {
+        return xdebug;
+    }
+
+    public void setXdebug(boolean xdebug) {
+        this.xdebug = xdebug;
+    }
+
+    @Input
     public void wsdl(String file, Closure<?> closure) {
         Wsdl wsdl = new Wsdl(file);
         wsdl = ConfigureUtil.configure(closure, wsdl);
@@ -128,9 +172,20 @@ public class WsImport extends DefaultTask {
         for (Wsdl wsdl : wsdls) {
             getWorkerExecutor().submit(WsImportRunnable.class, workerConfiguration -> {
                 workerConfiguration.setDisplayName("Importing WSDL");
-                workerConfiguration.setParams(new WsImportConfiguration(wsdlSourceRoot, generatedSourceRoot, generatedClassesRoot, keep, extension, verbose, quiet, debug, xnocompile, wsdl));
-                // TODO: Works in v4 onwards
-//                workerConfiguration.setIsolationMode(IsolationMode.CLASSLOADER);
+                workerConfiguration.setParams(new WsImportConfiguration(wsdlSourceRoot,
+                                                                        generatedSourceRoot,
+                                                                        generatedClassesRoot,
+                                                                        keep,
+                                                                        extension,
+                                                                        verbose,
+                                                                        quiet,
+                                                                        debug,
+                                                                        xnocompile,
+                                                                        xadditionalHeaders,
+                                                                        xNoAddressingDatabinding,
+                                                                        xdebug,
+                                                                        target,
+                                                                        wsdl));
                 workerConfiguration.classpath(jaxwsToolsConfiguration.getFiles());
             });
         }

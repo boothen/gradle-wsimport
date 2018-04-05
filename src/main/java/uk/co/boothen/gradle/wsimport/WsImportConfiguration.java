@@ -2,6 +2,8 @@ package uk.co.boothen.gradle.wsimport;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class WsImportConfiguration implements Serializable {
 
@@ -15,6 +17,11 @@ public class WsImportConfiguration implements Serializable {
     private final boolean quiet;
     private final boolean debug;
     private final boolean xnocompile;
+    private final boolean xadditionalHeaders;
+    private final boolean xNoAddressingDatabinding;
+    private final boolean xdebug;
+
+    private final String target;
     private final Wsdl wsdl;
 
 
@@ -27,6 +34,10 @@ public class WsImportConfiguration implements Serializable {
                                  boolean quiet,
                                  boolean debug,
                                  boolean xnocompile,
+                                 boolean xadditionalHeaders,
+                                 boolean xNoAddressingDatabinding,
+                                 boolean xdebug,
+                                 String target,
                                  Wsdl wsdl) {
         this.sourceRoot = sourceRoot;
         this.generatedSourceRoot = generatedSourceRoot;
@@ -37,6 +48,10 @@ public class WsImportConfiguration implements Serializable {
         this.quiet = quiet;
         this.debug = debug;
         this.xnocompile = xnocompile;
+        this.xadditionalHeaders = xadditionalHeaders;
+        this.xNoAddressingDatabinding = xNoAddressingDatabinding;
+        this.xdebug = xdebug;
+        this.target = target;
         this.wsdl = wsdl;
     }
 
@@ -76,7 +91,31 @@ public class WsImportConfiguration implements Serializable {
         return xnocompile;
     }
 
+    public boolean isXadditionalHeaders() {
+        return xadditionalHeaders;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public boolean isxNoAddressingDatabinding() {
+        return xNoAddressingDatabinding;
+    }
+
+    public boolean isXdebug() {
+        return xdebug;
+    }
+
     public Wsdl getWsdl() {
         return wsdl;
+    }
+
+    public List<File> bindingFiles() {
+        return wsdl.getBindingFiles()
+            .stream()
+            .map(binding -> new File(sourceRoot, binding))
+            .peek(System.out::println)
+            .collect(Collectors.toList());
     }
 }

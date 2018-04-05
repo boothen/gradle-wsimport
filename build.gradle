@@ -1,5 +1,6 @@
 plugins {
     id 'java-gradle-plugin'
+    id 'maven-publish'
     id "com.gradle.plugin-publish" version "0.9.10"
 }
 
@@ -16,6 +17,7 @@ dependencies {
 }
 
 group = "uk.co.boothen.gradle"
+version = "0.1"
 
 gradlePlugin {
     plugins {
@@ -34,7 +36,7 @@ pluginBundle {
     plugins {
         wsImportPlugin {
             id = "uk.co.boothen.gradle.wsimport"
-            displayName = "Yet another Gradle WsImport plugin"
+            displayName = "Yet another WsImport Gradle plugin"
         }
     }
 
@@ -42,6 +44,12 @@ pluginBundle {
         groupId = project.group.toString()
         artifactId = project.name
     }
+}
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+    options.encoding = 'UTF-8'
 }
 
 task wrapper(type: Wrapper) {

@@ -18,7 +18,7 @@ public class WsImportPlugin implements Plugin<Project> {
 
         if (!project.getPlugins().hasPlugin(JavaPlugin.class)) {
             logger.error("No java plugin detected. Enable java plugin");
-            throw new IllegalStateException("No java plugin detected. Enable java   plugin.");
+            throw new IllegalStateException("No java plugin detected. Enable java plugin.");
         }
 
         Configuration jaxWsTools = project.getConfigurations().create("jaxWsTools" );
