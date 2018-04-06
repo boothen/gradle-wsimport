@@ -5,8 +5,6 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
-    mavenCentral()
     jcenter()
 }
 
@@ -17,7 +15,6 @@ dependencies {
 }
 
 group = "uk.co.boothen.gradle"
-version = "0.1"
 
 gradlePlugin {
     plugins {
@@ -36,13 +33,11 @@ pluginBundle {
     plugins {
         wsImportPlugin {
             id = "uk.co.boothen.gradle.wsimport"
-            displayName = "Yet another WsImport Gradle plugin"
+            displayName = "WsImport plugin"
+            description = "Yet another WsImport Gradle plugin"
+            tags = ['wsimport', 'plugin']
+            version = "${pluginVersion}"
         }
-    }
-
-    mavenCoordinates {
-        groupId = project.group.toString()
-        artifactId = project.name
     }
 }
 
