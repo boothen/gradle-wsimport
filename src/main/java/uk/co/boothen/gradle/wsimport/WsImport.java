@@ -5,13 +5,13 @@ import groovy.lang.Closure;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.util.ConfigureUtil;
 import org.gradle.workers.WorkerExecutor;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class WsImport extends DefaultTask {
     private boolean debug;
     private boolean xnocompile;
     private boolean xadditionalHeaders;
-    private boolean xNoAddressingDatabinding;
+    private boolean xnoAddressingDatabinding;
     private boolean xdebug;
     private String target = "2.2";
 
@@ -36,8 +36,8 @@ public class WsImport extends DefaultTask {
 
 
     private String wsdlSourceRoot = getProject().getProjectDir().getAbsolutePath() + "/src/main/resources/wsdl/";
-    private File generatedSourceRoot = new File(getProject().getBuildDir() + "/generated/src/wsdl/main");
-    private File generatedClassesRoot = new File(getProject().getBuildDir() + "/classes/main");
+    private String generatedSourceRoot = getProject().getBuildDir() + "/generated/src/wsdl/main";
+    private String generatedClassesRoot = getProject().getBuildDir() + "/classes/main";
 
     @Input
     public boolean isKeep() {
@@ -116,12 +116,12 @@ public class WsImport extends DefaultTask {
     }
 
     @Input
-    public boolean isxNoAddressingDatabinding() {
-        return xNoAddressingDatabinding;
+    public boolean isXnoAddressingDatabinding() {
+        return xnoAddressingDatabinding;
     }
 
-    public void setxNoAddressingDatabinding(boolean xNoAddressingDatabinding) {
-        this.xNoAddressingDatabinding = xNoAddressingDatabinding;
+    public void setXnoAddressingDatabinding(boolean xnoAddressingDatabinding) {
+        this.xnoAddressingDatabinding = xnoAddressingDatabinding;
     }
 
     @Input
@@ -150,21 +150,31 @@ public class WsImport extends DefaultTask {
     }
 
     @OutputDirectory
-    public File getGeneratedSourceRoot() {
+    public String getGeneratedSourceRoot() {
         return generatedSourceRoot;
     }
 
-    public void setGeneratedSourceRoot(File generatedSourceRoot) {
+    public void setGeneratedSourceRoot(String generatedSourceRoot) {
         this.generatedSourceRoot = generatedSourceRoot;
     }
 
     @OutputDirectory
-    public File getGeneratedClassesRoot() {
+    public String getGeneratedClassesRoot() {
         return generatedClassesRoot;
     }
 
-    public void setGeneratedClassesRoot(File generatedClassesRoot) {
+    public void setGeneratedClassesRoot(String generatedClassesRoot) {
         this.generatedClassesRoot = generatedClassesRoot;
+    }
+
+
+    @InputDirectory
+    public String getWsdlSourceRoot() {
+        return wsdlSourceRoot;
+    }
+
+    public void setWsdlSourceRoot(String wsdlSourceRoot) {
+        this.wsdlSourceRoot = wsdlSourceRoot;
     }
 
     @TaskAction
@@ -182,7 +192,7 @@ public class WsImport extends DefaultTask {
                                                                         debug,
                                                                         xnocompile,
                                                                         xadditionalHeaders,
-                                                                        xNoAddressingDatabinding,
+                                                                        xnoAddressingDatabinding,
                                                                         xdebug,
                                                                         target,
                                                                         wsdl));

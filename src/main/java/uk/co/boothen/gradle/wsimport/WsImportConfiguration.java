@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 public class WsImportConfiguration implements Serializable {
 
     private final String sourceRoot;
-    private final File generatedSourceRoot;
-    private final File generatedClassesRoot;
+    private final String generatedSourceRoot;
+    private final String generatedClassesRoot;
 
     private final boolean keep;
     private final boolean extension;
@@ -26,8 +26,8 @@ public class WsImportConfiguration implements Serializable {
 
 
     public WsImportConfiguration(String sourceRoot,
-                                 File generatedSourceRoot,
-                                 File generatedClassesRoot,
+                                 String generatedSourceRoot,
+                                 String generatedClassesRoot,
                                  boolean keep,
                                  boolean extension,
                                  boolean verbose,
@@ -59,11 +59,11 @@ public class WsImportConfiguration implements Serializable {
         return sourceRoot;
     }
 
-    public File getGeneratedSourceRoot() {
+    public String getGeneratedSourceRoot() {
         return generatedSourceRoot;
     }
 
-    public File getGeneratedClassesRoot() {
+    public String getGeneratedClassesRoot() {
         return generatedClassesRoot;
     }
 
