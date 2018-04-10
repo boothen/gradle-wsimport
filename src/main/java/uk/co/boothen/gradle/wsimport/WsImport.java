@@ -5,13 +5,13 @@ import groovy.lang.Closure;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.util.ConfigureUtil;
 import org.gradle.workers.WorkerExecutor;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,14 +30,10 @@ public class WsImport extends DefaultTask {
     private boolean xnoAddressingDatabinding;
     private boolean xdebug;
     private String target = "2.2";
-
-
     private List<Wsdl> wsdls = new ArrayList<>();
-
-
-    private String wsdlSourceRoot = getProject().getProjectDir().getAbsolutePath() + "/src/main/resources/wsdl/";
-    private String generatedSourceRoot = getProject().getBuildDir() + "/generated/src/wsdl/main";
-    private String generatedClassesRoot = getProject().getBuildDir() + "/classes/main";
+    private String wsdlSourceRoot = Util.mergePaths(getProject().getProjectDir().getAbsolutePath(),"/src/main/resources/wsdl/");
+    private File generatedSourceRoot = Util.mergeFile(getProject().getBuildDir(), "/generated/src/wsdl/main");
+    private File generatedClassesRoot = Util.mergeFile(getProject().getBuildDir(), "/classes/main");
 
     @Input
     public boolean isKeep() {
@@ -134,6 +130,18 @@ public class WsImport extends DefaultTask {
     }
 
     @Input
+    public void setWsdl(String file) {
+        Wsdl wsdl = new Wsdl(file);
+        wsdls.add(wsdl);
+    }
+
+    @Input
+    public void wsdl(String file) {
+        Wsdl wsdl = new Wsdl(file);
+        wsdls.add(wsdl);
+    }
+
+    @Input
     public void wsdl(String file, Closure<?> closure) {
         Wsdl wsdl = new Wsdl(file);
         wsdl = ConfigureUtil.configure(closure, wsdl);
@@ -150,31 +158,36 @@ public class WsImport extends DefaultTask {
     }
 
     @OutputDirectory
-    public String getGeneratedSourceRoot() {
+    public File getGeneratedSourceRoot() {
         return generatedSourceRoot;
     }
 
     public void setGeneratedSourceRoot(String generatedSourceRoot) {
-        this.generatedSourceRoot = generatedSourceRoot;
+        this.generatedSourceRoot = Util.mergeFile(getProject().getBuildDir(), generatedSourceRoot);
     }
 
     @OutputDirectory
-    public String getGeneratedClassesRoot() {
+    public File getGeneratedClassesRoot() {
         return generatedClassesRoot;
     }
 
     public void setGeneratedClassesRoot(String generatedClassesRoot) {
-        this.generatedClassesRoot = generatedClassesRoot;
+        this.generatedClassesRoot = Util.mergeFile(getProject().getBuildDir(), generatedClassesRoot);
     }
 
 
-    @InputDirectory
+    @Input
     public String getWsdlSourceRoot() {
         return wsdlSourceRoot;
     }
 
     public void setWsdlSourceRoot(String wsdlSourceRoot) {
-        this.wsdlSourceRoot = wsdlSourceRoot;
+        this.wsdlSourceRoot = Util.mergePaths(this.getProject().getProjectDir().getAbsolutePath(), wsdlSourceRoot);
+    }
+
+    @Inject
+    protected WorkerExecutor getWorkerExecutor() {
+        throw new UnsupportedOperationException();
     }
 
     @TaskAction
@@ -201,8 +214,4 @@ public class WsImport extends DefaultTask {
         }
     }
 
-    @Inject
-    protected WorkerExecutor getWorkerExecutor() {
-        throw new UnsupportedOperationException();
-    }
 }

@@ -14,15 +14,19 @@ plugins {
 }
 ```
 
+## Simplest Example
+```groovy
+apply plugin: 'uk.co.boothen.gradle.wsimport'
 
+task wsimport(type: uk.co.boothen.gradle.wsimport.WsImport) {
+    wsdl = "create/Create.wsdl"
+}
+```
 
 ## Example
 
 ```groovy
-plugins {
-  id "uk.co.boothen.gradle.wsimport" version "0.1"
-}
-
+apply plugin: 'uk.co.boothen.gradle.wsimport'
 
 task wsimport(type: uk.co.boothen.gradle.wsimport.WsImport) {
     keep = true

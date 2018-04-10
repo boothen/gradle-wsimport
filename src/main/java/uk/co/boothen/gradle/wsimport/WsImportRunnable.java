@@ -22,14 +22,14 @@ public class WsImportRunnable implements Runnable {
         WsImport2 wsImport2 = new WsImport2();
 
         wsImport2.setKeep(wsImportConfiguration.isKeep());
-        wsImport2.setDestdir(new File(wsImportConfiguration.getGeneratedClassesRoot()));
-        wsImport2.setSourcedestdir(new File(wsImportConfiguration.getGeneratedSourceRoot()));
+        wsImport2.setDestdir(wsImportConfiguration.getGeneratedClassesRoot());
+        wsImport2.setSourcedestdir(wsImportConfiguration.getGeneratedSourceRoot());
         wsImport2.setExtension(wsImportConfiguration.isExtension());
         wsImport2.setVerbose(wsImportConfiguration.isVerbose());
         wsImport2.setQuiet(wsImportConfiguration.isQuiet());
         wsImport2.setDebug(wsImportConfiguration.isDebug());
         wsImport2.setXnocompile(wsImportConfiguration.isXnocompile());
-        wsImport2.setWsdl(wsImportConfiguration.getSourceRoot() + wsImportConfiguration.getWsdl().getFile());
+        wsImport2.setWsdl(wsImportConfiguration.getSourceFile());
         wsImport2.setPackage(wsImportConfiguration.getWsdl().getPackageName());
         if (!"".equals(wsImportConfiguration.getTarget())) {
             wsImport2.setTarget(wsImportConfiguration.getTarget());

@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 public class WsImportConfiguration implements Serializable {
 
     private final String sourceRoot;
-    private final String generatedSourceRoot;
-    private final String generatedClassesRoot;
+    private final File generatedSourceRoot;
+    private final File generatedClassesRoot;
 
     private final boolean keep;
     private final boolean extension;
@@ -26,8 +26,8 @@ public class WsImportConfiguration implements Serializable {
 
 
     public WsImportConfiguration(String sourceRoot,
-                                 String generatedSourceRoot,
-                                 String generatedClassesRoot,
+                                 File generatedSourceRoot,
+                                 File generatedClassesRoot,
                                  boolean keep,
                                  boolean extension,
                                  boolean verbose,
@@ -59,11 +59,11 @@ public class WsImportConfiguration implements Serializable {
         return sourceRoot;
     }
 
-    public String getGeneratedSourceRoot() {
+    public File getGeneratedSourceRoot() {
         return generatedSourceRoot;
     }
 
-    public String getGeneratedClassesRoot() {
+    public File getGeneratedClassesRoot() {
         return generatedClassesRoot;
     }
 
@@ -114,8 +114,12 @@ public class WsImportConfiguration implements Serializable {
     public List<File> bindingFiles() {
         return wsdl.getBindingFiles()
             .stream()
-            .map(binding -> new File(sourceRoot, binding))
+            .map(binding -> new File(Util.mergePaths(sourceRoot, binding)))
             .peek(System.out::println)
             .collect(Collectors.toList());
+    }
+
+    public String getSourceFile() {
+        return Util.mergePaths(sourceRoot, wsdl.getFile());
     }
 }
