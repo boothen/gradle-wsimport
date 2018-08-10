@@ -1,11 +1,12 @@
-Gradle WsImport Plugin
+Gradle wsimport Plugin
 ======================
 
 
 [![Build Status](https://secure.travis-ci.org/boothen/gradle-wsimport.png)](http://travis-ci.org/boothen/gradle-wsimport)
 
 
-Gradle plugin that wraps the Ant WSImport allowing for a simple and clean DSL in Gradle.
+Gradle plugin that wraps the [Ant wsimport](https://javaee.github.io/metro-jax-ws/doc/user-guide/ch04.html#tools-wsimport-ant-task) allowing for a simple and clean DSL in Gradle.
+
 ## Using the plugin
 
 ```groovy
@@ -14,7 +15,12 @@ plugins {
 }
 ```
 
-## Simplest Example
+## Define the wsimport task
+
+
+
+## Simplest example
+
 ```groovy
 apply plugin: 'uk.co.boothen.gradle.wsimport'
 
@@ -23,18 +29,24 @@ task wsimport(type: uk.co.boothen.gradle.wsimport.WsImport) {
 }
 ```
 
-## Example
+## More complex example
 
 ```groovy
 apply plugin: 'uk.co.boothen.gradle.wsimport'
 
 task wsimport(type: uk.co.boothen.gradle.wsimport.WsImport) {
+    
+    wsdlSourceRoot = "/src/main/resources/wsdl"
+    generatedSourceRoot = "/generated/src/wsdl/main"
+    generatedClassesRoot = "/classes/main"
+
     keep = true
     extension = true
-    verbose = true
-    quiet = false
-    debug = true
+    verbose = false
+    quiet = true
+    debug = false
     xnocompile = true
+
 
     wsdl("create/Create.wsdl") {
         bindingFile("create/bindings-create.xml")
