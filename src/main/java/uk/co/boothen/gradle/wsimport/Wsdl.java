@@ -10,6 +10,7 @@ public class Wsdl implements Serializable {
 
     private String file;
     private String packageName;
+    private String wsdlLocation;
     private List<String> bindingFiles = new ArrayList<>();
     private List<String> xjcargs = new ArrayList<>();
 
@@ -32,6 +33,14 @@ public class Wsdl implements Serializable {
 
     public void setPackageName(String packageName) {
         this.packageName = packageName;
+    }
+
+    public String getWsdlLocation() {
+        return wsdlLocation;
+    }
+
+    public void setWsdlLocation(String wsdlLocation) {
+        this.wsdlLocation = wsdlLocation;
     }
 
     public List<String> getBindingFiles() {

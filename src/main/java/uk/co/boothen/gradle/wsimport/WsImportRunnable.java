@@ -38,6 +38,9 @@ public class WsImportRunnable implements Runnable {
         wsImport2.setXadditionalHeaders(wsImportConfiguration.isXadditionalHeaders());
         wsImport2.setxNoAddressingDatabinding(wsImportConfiguration.isxNoAddressingDatabinding());
         wsImport2.setXdebug(wsImportConfiguration.isXdebug());
+        if (!"".equals(wsImportConfiguration.getWsdl().getWsdlLocation())) {
+            wsImport2.setWsdllocation(wsImportConfiguration.getWsdl().getWsdlLocation());
+        }
 
         // TODO: Expose some of this properties
 //        wsImport2.setXauthfile();
@@ -48,7 +51,6 @@ public class WsImportRunnable implements Runnable {
 //        wsImport2.setImplDestDir();
 //        wsImport2.setImplPortName();
 //        wsImport2.setImplServiceName();
-//        wsImport2.setWsdllocation();
 //        wsImport2.setXUseBaseResourceAndURLToLoadWSDL();
 
         Commandline.Argument xjcarg = wsImport2.createXjcarg();
