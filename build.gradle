@@ -35,7 +35,7 @@ pluginBundle {
         wsImportPlugin {
             id = "uk.co.boothen.gradle.wsimport"
             displayName = "WsImport plugin"
-            description = "Yet another WsImport Gradle plugin - requires Gradle 4.0 or greater. If you're still on Gradle 3.x using version 3.0 of this plugin."
+            description = "Yet another WsImport Gradle plugin - requires Gradle 4.0 or greater. If you're still on Gradle 3.x use version 3.0 of this plugin."
             tags = ['wsimport', 'plugin']
 
         }
