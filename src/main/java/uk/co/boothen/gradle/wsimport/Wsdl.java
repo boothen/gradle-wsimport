@@ -13,6 +13,7 @@ public class Wsdl implements Serializable {
     private String wsdlLocation;
     private List<String> bindingFiles = new ArrayList<>();
     private List<String> xjcargs = new ArrayList<>();
+    private List<String> extraArgs = new ArrayList<>();
 
     public Wsdl(String file) {
 
@@ -67,5 +68,18 @@ public class Wsdl implements Serializable {
     @Input
     public void xjcarg(String xjcarg) {
         this.xjcargs.add(xjcarg);
+    }
+
+    public List<String> getExtraArgs() {
+        return extraArgs;
+    }
+
+    public void setExtraArgs(List<String> extraArgs) {
+        this.extraArgs = extraArgs;
+    }
+
+    @Input
+    public void extraArg(String extraArg) {
+        this.extraArgs.add(extraArg);
     }
 }

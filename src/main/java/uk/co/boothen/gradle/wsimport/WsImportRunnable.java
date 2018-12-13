@@ -58,6 +58,11 @@ public class WsImportRunnable implements Runnable {
             xjcarg.setValue(wsdlXlcArg);
         }
 
+        Commandline.Argument extraArgs = wsImport2.createArg();
+        for (String extraArg : wsImportConfiguration.getWsdl().getExtraArgs()) {
+            extraArgs.setValue(extraArg);
+        }
+
         for (File binding : wsImportConfiguration.bindingFiles()) {
             wsImport2.setBinding(binding.getAbsolutePath());
         }

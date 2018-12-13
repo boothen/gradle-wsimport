@@ -51,6 +51,7 @@ task wsimport(type: uk.co.boothen.gradle.wsimport.WsImport) {
     wsdl("create/Create.wsdl") {
         bindingFile("create/bindings-create.xml")
         xjcarg("-XautoNameResolution")
+        extraArg("-J-Djavax.xml.accessExternalDTD=all")
     }
 
     wsdl ("find/Find.wsdl") {
