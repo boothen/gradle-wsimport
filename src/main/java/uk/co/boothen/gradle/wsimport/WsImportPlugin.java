@@ -14,19 +14,18 @@ public class WsImportPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
 
-        Logger logger = project.getLogger();
-
-        if (!project.getPlugins().hasPlugin(JavaPlugin.class)) {
-            logger.error("No java plugin detected. Enable java plugin");
-            throw new IllegalStateException("No java plugin detected. Enable java plugin.");
-        }
-
         Configuration jaxWsTools = project.getConfigurations().create("jaxWsTools" );
         project.getDependencies().add( "jaxWsTools", "com.sun.xml.ws:jaxws-tools:2.2.10" );
 
         TaskContainer tasks = project.getTasks();
 
         tasks.withType(WsImport.class, task -> {
+
+            if (!project.getPlugins().hasPlugin(JavaPlugin.class)) {
+                Logger logger = project.getLogger();
+                logger.error("No java plugin detected. Enable java plugin");
+                throw new IllegalStateException("No java plugin detected. Enable java plugin.");
+            }
 
             JavaPluginConvention javaPluginConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
             SourceSet javaMain = javaPluginConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
