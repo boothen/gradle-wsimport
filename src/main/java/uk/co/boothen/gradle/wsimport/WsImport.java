@@ -30,6 +30,7 @@ public class WsImport extends DefaultTask {
     private boolean xnoAddressingDatabinding;
     private boolean xdebug;
     private String target = "2.2";
+    private String encoding = "UTF-8";
     private List<Wsdl> wsdls = new ArrayList<>();
     private String wsdlSourceRoot = Util.mergePaths(getProject().getProjectDir().getAbsolutePath(),"/src/main/resources/wsdl/");
     private File generatedSourceRoot = Util.mergeFile(getProject().getBuildDir(), "/generated/src/wsdl/main");
@@ -109,6 +110,15 @@ public class WsImport extends DefaultTask {
 
     public void setTarget(String target) {
         this.target = target;
+    }
+
+    @Input
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
     @Input
@@ -208,7 +218,7 @@ public class WsImport extends DefaultTask {
                                                                         xnoAddressingDatabinding,
                                                                         xdebug,
                                                                         target,
-                                                                        wsdl));
+                        encoding, wsdl));
                 workerConfiguration.classpath(jaxwsToolsConfiguration.getFiles());
             });
         }
