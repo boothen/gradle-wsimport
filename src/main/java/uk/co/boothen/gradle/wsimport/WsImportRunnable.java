@@ -31,7 +31,9 @@ public class WsImportRunnable implements Runnable {
         wsImport2.setXnocompile(wsImportConfiguration.isXnocompile());
         wsImport2.setWsdl(wsImportConfiguration.getSourceFile());
         wsImport2.setPackage(wsImportConfiguration.getWsdl().getPackageName());
-        if (!"".equals(wsImportConfiguration.getTarget())) {
+        if (!"".equals(wsImportConfiguration.getEncoding())) {
+            wsImport2.setEncoding(wsImportConfiguration.getEncoding());
+        }if (!"".equals(wsImportConfiguration.getTarget())) {
             wsImport2.setTarget(wsImportConfiguration.getTarget());
         }
 
