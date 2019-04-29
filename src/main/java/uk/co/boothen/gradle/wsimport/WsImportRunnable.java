@@ -69,6 +69,8 @@ public class WsImportRunnable implements Runnable {
             wsImport2.setBinding(binding.getAbsolutePath());
         }
 
+        System.setProperty("java.class.path", '"' + wsImportConfiguration.getClasspath() + '"');
+
         wsImport2.execute();
     }
 }
