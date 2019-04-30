@@ -55,9 +55,8 @@ public class WsImportRunnable implements Runnable {
 //        wsImport2.setImplServiceName();
 //        wsImport2.setXUseBaseResourceAndURLToLoadWSDL();
 
-        Commandline.Argument xjcarg = wsImport2.createXjcarg();
-        for (String wsdlXlcArg : wsImportConfiguration.getWsdl().getXjcargs()) {
-            xjcarg.setValue(wsdlXlcArg);
+        for (String wsdlXjcArg : wsImportConfiguration.getWsdl().getXjcargs()) {
+            wsImport2.createXjcarg().setValue(wsdlXjcArg);
         }
 
         Commandline.Argument extraArgs = wsImport2.createArg();
