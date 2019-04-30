@@ -9,11 +9,13 @@ import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.util.ConfigureUtil;
+import org.gradle.workers.IsolationMode;
 import org.gradle.workers.WorkerExecutor;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -205,19 +207,21 @@ public class WsImport extends DefaultTask {
         for (Wsdl wsdl : wsdls) {
             getWorkerExecutor().submit(WsImportRunnable.class, workerConfiguration -> {
                 workerConfiguration.setDisplayName("Importing WSDL");
-                workerConfiguration.setParams(new WsImportConfiguration(wsdlSourceRoot,
-                                                                        generatedSourceRoot,
-                                                                        generatedClassesRoot,
-                                                                        keep,
-                                                                        extension,
-                                                                        verbose,
-                                                                        quiet,
-                                                                        debug,
-                                                                        xnocompile,
-                                                                        xadditionalHeaders,
-                                                                        xnoAddressingDatabinding,
-                                                                        xdebug,
-                                                                        target,
+                workerConfiguration.setParams(new WsImportConfiguration(
+                        wsdlSourceRoot,
+                        generatedSourceRoot,
+                        generatedClassesRoot,
+                        jaxwsToolsConfiguration.getFiles().stream().map(File::toString).collect(Collectors.joining(File.pathSeparator)),
+                        keep,
+                        extension,
+                        verbose,
+                        quiet,
+                        debug,
+                        xnocompile,
+                        xadditionalHeaders,
+                        xnoAddressingDatabinding,
+                        xdebug,
+                        target,
                         encoding, wsdl));
                 workerConfiguration.classpath(jaxwsToolsConfiguration.getFiles());
             });
