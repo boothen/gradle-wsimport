@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.sun.xml.ws:jaxws-tools:2.2.10'
+    implementation 'com.sun.xml.ws:jaxws-tools:2.3.2'
 
     implementation gradleApi()
 }
@@ -46,8 +46,4 @@ tasks.withType(JavaCompile) {
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
     options.encoding = 'UTF-8'
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.6'
 }
