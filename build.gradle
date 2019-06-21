@@ -9,6 +9,7 @@ repositories {
 }
 
 dependencies {
+    // Version is also defined in WsImportPlugin
     implementation 'com.sun.xml.ws:jaxws-tools:2.3.2'
 
     implementation gradleApi()
