@@ -11,7 +11,7 @@ Gradle plugin that wraps the [Ant wsimport](https://javaee.github.io/metro-jax-w
 
 ```groovy
 plugins {
-  id "uk.co.boothen.gradle.wsimport" version "0.7"
+  id "uk.co.boothen.gradle.wsimport" version "0.9"
 }
 ```
 
