@@ -4,12 +4,14 @@ import groovy.lang.Closure;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.util.ConfigureUtil;
-import org.gradle.workers.IsolationMode;
 import org.gradle.workers.WorkerExecutor;
 
 import java.io.File;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+@CacheableTask
 public class WsImport extends DefaultTask {
 
     private Configuration jaxwsToolsConfiguration;
@@ -161,6 +164,7 @@ public class WsImport extends DefaultTask {
     }
 
     @InputFiles
+    @PathSensitive(PathSensitivity.NAME_ONLY)
     public Configuration getJaxwsToolsConfiguration() {
         return jaxwsToolsConfiguration;
     }
