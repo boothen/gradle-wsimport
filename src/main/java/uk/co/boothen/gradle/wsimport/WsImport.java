@@ -144,19 +144,16 @@ public class WsImport extends DefaultTask {
         this.xdebug = xdebug;
     }
 
-    @Input
     public void setWsdl(String file) {
         Wsdl wsdl = new Wsdl(file);
         wsdls.add(wsdl);
     }
 
-    @Input
     public void wsdl(String file) {
         Wsdl wsdl = new Wsdl(file);
         wsdls.add(wsdl);
     }
 
-    @Input
     public void wsdl(String file, Closure<?> closure) {
         Wsdl wsdl = new Wsdl(file);
         wsdl = ConfigureUtil.configure(closure, wsdl);

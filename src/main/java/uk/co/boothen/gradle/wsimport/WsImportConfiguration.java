@@ -41,7 +41,8 @@ public class WsImportConfiguration implements Serializable {
                                  boolean xNoAddressingDatabinding,
                                  boolean xdebug,
                                  String target,
-                                 String encoding, Wsdl wsdl) {
+                                 String encoding,
+                                 Wsdl wsdl) {
         this.sourceRoot = sourceRoot;
         this.generatedSourceRoot = generatedSourceRoot;
         this.generatedClassesRoot = generatedClassesRoot;
@@ -122,10 +123,10 @@ public class WsImportConfiguration implements Serializable {
 
     public List<File> bindingFiles() {
         return wsdl.getBindingFiles()
-            .stream()
-            .map(binding -> new File(Util.mergePaths(sourceRoot, binding)))
-            .peek(System.out::println)
-            .collect(Collectors.toList());
+                   .stream()
+                   .map(binding -> new File(Util.mergePaths(sourceRoot, binding)))
+                   .peek(System.out::println)
+                   .collect(Collectors.toList());
     }
 
     public String getSourceFile() {

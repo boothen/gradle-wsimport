@@ -11,7 +11,7 @@ Gradle plugin that wraps the [Ant wsimport](https://javaee.github.io/metro-jax-w
 
 ```groovy
 plugins {
-  id "uk.co.boothen.gradle.wsimport" version "0.10"
+  id "uk.co.boothen.gradle.wsimport" version "0.11"
 }
 ```
 
@@ -48,10 +48,12 @@ task wsimport(type: uk.co.boothen.gradle.wsimport.WsImport) {
     xnocompile = true
 
 
-    wsdl("create/Create.wsdl") {
+    wsdl ("create/Create.wsdl") {
         bindingFile("create/bindings-create.xml")
         xjcarg("-XautoNameResolution")
         extraArg("-J-Djavax.xml.accessExternalDTD=all")
+        packageName("com.different.package.name")
+        wsdlLocation("schema/schema.wsdl")
     }
 
     wsdl ("find/Find.wsdl") {

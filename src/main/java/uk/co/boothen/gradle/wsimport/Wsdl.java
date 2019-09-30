@@ -36,11 +36,21 @@ public class Wsdl implements Serializable {
         this.packageName = packageName;
     }
 
+    @Input
+    public void packageName(String packageName) {
+        this.packageName = packageName;
+    }
+
     public String getWsdlLocation() {
         return wsdlLocation;
     }
 
     public void setWsdlLocation(String wsdlLocation) {
+        this.wsdlLocation = wsdlLocation;
+    }
+
+    @Input
+    public void wsdlLocation(String wsdlLocation) {
         this.wsdlLocation = wsdlLocation;
     }
 
