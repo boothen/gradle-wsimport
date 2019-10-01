@@ -10,7 +10,6 @@ public class WsImportConfiguration implements Serializable {
     private final String sourceRoot;
     private final File generatedSourceRoot;
     private final File generatedClassesRoot;
-    private final String classpath;
 
     private final boolean keep;
     private final boolean extension;
@@ -26,11 +25,9 @@ public class WsImportConfiguration implements Serializable {
     private final String encoding;
     private final Wsdl wsdl;
 
-
-    public WsImportConfiguration(String sourceRoot,
+    public  WsImportConfiguration(String sourceRoot,
                                  File generatedSourceRoot,
                                  File generatedClassesRoot,
-                                 String classpath,
                                  boolean keep,
                                  boolean extension,
                                  boolean verbose,
@@ -46,7 +43,6 @@ public class WsImportConfiguration implements Serializable {
         this.sourceRoot = sourceRoot;
         this.generatedSourceRoot = generatedSourceRoot;
         this.generatedClassesRoot = generatedClassesRoot;
-        this.classpath = classpath;
         this.keep = keep;
         this.extension = extension;
         this.verbose = verbose;
@@ -71,10 +67,6 @@ public class WsImportConfiguration implements Serializable {
 
     public File getGeneratedClassesRoot() {
         return generatedClassesRoot;
-    }
-
-    public String getClasspath() {
-        return classpath;
     }
 
     public boolean isKeep() {
@@ -125,7 +117,6 @@ public class WsImportConfiguration implements Serializable {
         return wsdl.getBindingFiles()
                    .stream()
                    .map(binding -> new File(Util.mergePaths(sourceRoot, binding)))
-                   .peek(System.out::println)
                    .collect(Collectors.toList());
     }
 

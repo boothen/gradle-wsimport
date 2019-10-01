@@ -12,17 +12,19 @@ import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.util.ConfigureUtil;
+import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 @CacheableTask
 public class WsImport extends DefaultTask {
+
+    private final WorkerExecutor workerExecutor;
 
     private Configuration jaxwsToolsConfiguration;
     private boolean keep;
@@ -37,9 +39,14 @@ public class WsImport extends DefaultTask {
     private String target = "2.2";
     private String encoding = "UTF-8";
     private List<Wsdl> wsdls = new ArrayList<>();
-    private String wsdlSourceRoot = Util.mergePaths(getProject().getProjectDir().getAbsolutePath(),"/src/main/resources/wsdl/");
+    private String wsdlSourceRoot = Util.mergePaths(getProject().getProjectDir().getAbsolutePath(), "/src/main/resources/wsdl/");
     private File generatedSourceRoot = Util.mergeFile(getProject().getBuildDir(), "/generated/src/wsdl/main");
     private File generatedClassesRoot = Util.mergeFile(getProject().getBuildDir(), "/classes/main");
+
+    @Inject
+    public WsImport(WorkerExecutor workerExecutor) {
+        this.workerExecutor = workerExecutor;
+    }
 
     @Input
     public boolean isKeep() {
@@ -166,7 +173,7 @@ public class WsImport extends DefaultTask {
         return jaxwsToolsConfiguration;
     }
 
-    public void setJaxwsToolsConfiguration( Configuration jaxwsToolsConfiguration ) {
+    public void setJaxwsToolsConfiguration(Configuration jaxwsToolsConfiguration) {
         this.jaxwsToolsConfiguration = jaxwsToolsConfiguration;
     }
 
@@ -198,35 +205,36 @@ public class WsImport extends DefaultTask {
         this.wsdlSourceRoot = Util.mergePaths(this.getProject().getProjectDir().getAbsolutePath(), wsdlSourceRoot);
     }
 
-    @Inject
-    protected WorkerExecutor getWorkerExecutor() {
-        throw new UnsupportedOperationException();
-    }
-
     @TaskAction
     public void taskAction() {
+        WorkQueue workQueue = workerExecutor.classLoaderIsolation(workerSpec -> {
+            workerSpec.getClasspath().from(jaxwsToolsConfiguration);
+        });
+
         for (Wsdl wsdl : wsdls) {
-            getWorkerExecutor().submit(WsImportRunnable.class, workerConfiguration -> {
-                workerConfiguration.setDisplayName("Importing WSDL");
-                workerConfiguration.setParams(new WsImportConfiguration(
-                        wsdlSourceRoot,
-                        generatedSourceRoot,
-                        generatedClassesRoot,
-                        jaxwsToolsConfiguration.getFiles().stream().map(File::toString).collect(Collectors.joining(File.pathSeparator)),
-                        keep,
-                        extension,
-                        verbose,
-                        quiet,
-                        debug,
-                        xnocompile,
-                        xadditionalHeaders,
-                        xnoAddressingDatabinding,
-                        xdebug,
-                        target,
-                        encoding, wsdl));
-                workerConfiguration.classpath(jaxwsToolsConfiguration.getFiles());
+            WsImportConfiguration wsImportConfiguration = createWsImportConfiguration(wsdl);
+            workQueue.submit(WsImportWorkAction.class, parameters -> {
+                parameters.getWsImportConfiguration().set(wsImportConfiguration);
             });
         }
+    }
+
+    private WsImportConfiguration createWsImportConfiguration(Wsdl wsdl) {
+        return new WsImportConfiguration(wsdlSourceRoot,
+                                         generatedSourceRoot,
+                                         generatedClassesRoot,
+                                         keep,
+                                         extension,
+                                         verbose,
+                                         quiet,
+                                         debug,
+                                         xnocompile,
+                                         xadditionalHeaders,
+                                         xnoAddressingDatabinding,
+                                         xdebug,
+                                         target,
+                                         encoding,
+                                         wsdl);
     }
 
 }

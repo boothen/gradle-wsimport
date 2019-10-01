@@ -3,24 +3,16 @@ package uk.co.boothen.gradle.wsimport;
 import com.sun.tools.ws.ant.WsImport2;
 
 import org.apache.tools.ant.types.Commandline;
+import org.gradle.workers.WorkAction;
 
 import java.io.File;
 
-import javax.inject.Inject;
-
-public class WsImportRunnable implements Runnable {
-
-    private final WsImportConfiguration wsImportConfiguration;
-
-    @Inject
-    public WsImportRunnable(WsImportConfiguration wsImportConfiguration) {
-        this.wsImportConfiguration = wsImportConfiguration;
-    }
+public abstract class WsImportWorkAction implements WorkAction<WsImportWorkParameters> {
 
     @Override
-    public void run() {
+    public void execute() {
         WsImport2 wsImport2 = new WsImport2();
-
+        WsImportConfiguration wsImportConfiguration = getParameters().getWsImportConfiguration().get();
         wsImport2.setKeep(wsImportConfiguration.isKeep());
         wsImport2.setDestdir(wsImportConfiguration.getGeneratedClassesRoot());
         wsImport2.setSourcedestdir(wsImportConfiguration.getGeneratedSourceRoot());
@@ -67,8 +59,6 @@ public class WsImportRunnable implements Runnable {
         for (File binding : wsImportConfiguration.bindingFiles()) {
             wsImport2.setBinding(binding.getAbsolutePath());
         }
-
-        System.setProperty("java.class.path", '"' + wsImportConfiguration.getClasspath() + '"');
 
         wsImport2.execute();
     }
