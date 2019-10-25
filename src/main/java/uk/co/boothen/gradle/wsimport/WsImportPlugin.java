@@ -23,6 +23,9 @@ public class WsImportPlugin implements Plugin<Project> {
 
         Configuration jaxWsTools = project.getConfigurations().create("jaxWsTools" );
         project.getDependencies().add( "jaxWsTools", "com.sun.xml.ws:jaxws-tools:2.3.2" );
+        project.getDependencies().add( "implementation", "javax.xml.bind:jaxb-api:2.3.1" );
+        project.getDependencies().add( "implementation", "javax.xml.ws:jaxws-api:2.3.1" );
+        project.getDependencies().add( "implementation", "javax.jws:javax.jws-api:1.1" );
 
         TaskContainer tasks = project.getTasks();
 
