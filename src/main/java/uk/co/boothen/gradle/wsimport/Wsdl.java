@@ -9,14 +9,13 @@ import java.util.List;
 public class Wsdl implements Serializable {
 
     private String file;
-    private String packageName;
-    private String wsdlLocation;
+    private String packageName = "";
+    private String wsdlLocation = "";
     private List<String> bindingFiles = new ArrayList<>();
     private List<String> xjcargs = new ArrayList<>();
     private List<String> extraArgs = new ArrayList<>();
 
     public Wsdl(String file) {
-
         this.file = file;
     }
 

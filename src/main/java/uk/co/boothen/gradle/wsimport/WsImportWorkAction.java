@@ -2,38 +2,46 @@ package uk.co.boothen.gradle.wsimport;
 
 import com.sun.tools.ws.ant.WsImport2;
 
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.Commandline;
+import org.apache.tools.ant.types.FileSet;
 import org.gradle.workers.WorkAction;
 
 import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class WsImportWorkAction implements WorkAction<WsImportWorkParameters> {
 
     @Override
     public void execute() {
         WsImport2 wsImport2 = new WsImport2();
-        WsImportConfiguration wsImportConfiguration = getParameters().getWsImportConfiguration().get();
-        wsImport2.setKeep(wsImportConfiguration.isKeep());
-        wsImport2.setDestdir(wsImportConfiguration.getGeneratedClassesRoot());
-        wsImport2.setSourcedestdir(wsImportConfiguration.getGeneratedSourceRoot());
-        wsImport2.setExtension(wsImportConfiguration.isExtension());
-        wsImport2.setVerbose(wsImportConfiguration.isVerbose());
-        wsImport2.setQuiet(wsImportConfiguration.isQuiet());
-        wsImport2.setDebug(wsImportConfiguration.isDebug());
-        wsImport2.setXnocompile(wsImportConfiguration.isXnocompile());
-        wsImport2.setWsdl(wsImportConfiguration.getSourceFile());
-        wsImport2.setPackage(wsImportConfiguration.getWsdl().getPackageName());
-        if (!"".equals(wsImportConfiguration.getEncoding())) {
-            wsImport2.setEncoding(wsImportConfiguration.getEncoding());
-        }if (!"".equals(wsImportConfiguration.getTarget())) {
-            wsImport2.setTarget(wsImportConfiguration.getTarget());
+        Wsdl wsdl = getParameters().getWsdl().get();
+        String wsdlSourceRoot = getParameters().getWsdlSourceRoot().get();
+        String wsdlSourceFile = Util.mergePaths(wsdlSourceRoot, wsdl.getFile());
+
+        wsImport2.setKeep(getParameters().getKeep().get());
+        wsImport2.setDestdir(getParameters().getGeneratedClassesRoot().get());
+        wsImport2.setSourcedestdir(getParameters().getGeneratedSourceRoot().get());
+        wsImport2.setExtension(getParameters().getExtension().get());
+        wsImport2.setVerbose(getParameters().getVerbose().get());
+        wsImport2.setQuiet(getParameters().getQuiet().get());
+        wsImport2.setDebug(getParameters().getDebug().get());
+        wsImport2.setXnocompile(getParameters().getXnocompile().get());
+        wsImport2.setWsdl(wsdlSourceFile);
+        wsImport2.setEncoding(getParameters().getEncoding().get());
+        wsImport2.setTarget(getParameters().getTarget().get());
+
+        wsImport2.setXadditionalHeaders(getParameters().getXadditionalHeaders().get());
+        wsImport2.setxNoAddressingDatabinding(getParameters().getXNoAddressingDatabinding().get());
+        wsImport2.setXdebug(getParameters().getXdebug().get());
+
+        if (!"".equals(wsdl.getPackageName())) {
+            wsImport2.setPackage(wsdl.getPackageName());
         }
 
-        wsImport2.setXadditionalHeaders(wsImportConfiguration.isXadditionalHeaders());
-        wsImport2.setxNoAddressingDatabinding(wsImportConfiguration.isxNoAddressingDatabinding());
-        wsImport2.setXdebug(wsImportConfiguration.isXdebug());
-        if (!"".equals(wsImportConfiguration.getWsdl().getWsdlLocation())) {
-            wsImport2.setWsdllocation(wsImportConfiguration.getWsdl().getWsdlLocation());
+        if (!"".equals(wsdl.getWsdlLocation())) {
+            wsImport2.setWsdllocation(wsdl.getWsdlLocation());
         }
 
         // TODO: Expose some of this properties
@@ -47,19 +55,33 @@ public abstract class WsImportWorkAction implements WorkAction<WsImportWorkParam
 //        wsImport2.setImplServiceName();
 //        wsImport2.setXUseBaseResourceAndURLToLoadWSDL();
 
-        for (String wsdlXjcArg : wsImportConfiguration.getWsdl().getXjcargs()) {
+        for (String wsdlXjcArg : wsdl.getXjcargs()) {
             wsImport2.createXjcarg().setValue(wsdlXjcArg);
         }
 
         Commandline.Argument extraArgs = wsImport2.createArg();
-        for (String extraArg : wsImportConfiguration.getWsdl().getExtraArgs()) {
+        for (String extraArg : wsdl.getExtraArgs()) {
             extraArgs.setValue(extraArg);
         }
 
-        for (File binding : wsImportConfiguration.bindingFiles()) {
+        for (File binding : bindingFiles(wsdl, wsdlSourceRoot)) {
             wsImport2.setBinding(binding.getAbsolutePath());
         }
 
+        FileSet fileSet = new FileSet();
+        Project project = new Project();
+        project.setBaseDir(getParameters().getProjectRoot().get());
+        fileSet.setProject(project);
+        fileSet.setDir(getParameters().getGeneratedClassesRoot().get());
+        wsImport2.setProject(project);
+        wsImport2.addConfiguredProduces(fileSet);
         wsImport2.execute();
+    }
+
+    public List<File> bindingFiles(Wsdl wsdl, String wsdlSourceRoot) {
+        return wsdl.getBindingFiles()
+                   .stream()
+                   .map(binding -> new File(Util.mergePaths(wsdlSourceRoot, binding)))
+                   .collect(Collectors.toList());
     }
 }
