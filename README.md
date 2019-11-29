@@ -1,9 +1,5 @@
-Gradle wsimport plugin
+Gradle WSimport Plugin [![Build Status](https://secure.travis-ci.org/boothen/gradle-wsimport.png)](http://travis-ci.org/boothen/gradle-wsimport)
 ======================
-
-
-[![Build Status](https://secure.travis-ci.org/boothen/gradle-wsimport.png)](http://travis-ci.org/boothen/gradle-wsimport)
-
 
 Gradle plugin that wraps the [Ant wsimport](https://javaee.github.io/metro-jax-ws/doc/user-guide/ch04.html#tools-wsimport-ant-task) task providing a simple and clean DSL to generate source and class files from a WSDL.
 
