@@ -17,7 +17,6 @@ package uk.co.boothen.gradle.wsimport;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.plugins.JavaPlugin;
@@ -27,8 +26,6 @@ import org.gradle.api.tasks.TaskContainer;
 import org.gradle.util.GradleVersion;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class WsImportPlugin implements Plugin<Project> {
 
@@ -66,8 +63,8 @@ public class WsImportPlugin implements Plugin<Project> {
             File generatedClassesRoot = Util.mergeFile(project.getBuildDir(), wsImportPluginExtension.getGeneratedClassesRoot());
             javaMain.getJava().srcDir(generatedSourceRoot);
 
-            List<Task> wsdlTasks = new ArrayList<>();
             int count = 1;
+            TaskContainer tasks = project.getTasks();
             for (Wsdl wsdl : wsImportPluginExtension.getWsdls()) {
                 WsImportTask wsImportTask = project.getTasks().create("wsImport-" + count++, WsImportTask.class);
                 wsImportTask.getKeep().set(wsImportPluginExtension.getKeep());
@@ -86,11 +83,9 @@ public class WsImportPlugin implements Plugin<Project> {
                 wsImportTask.getWsdlSourceRoot().set(wsdlSourceRoot);
                 wsImportTask.getGeneratedSourceRoot().set(generatedSourceRoot);
                 wsImportTask.getGeneratedClassesRoot().set(generatedClassesRoot);
-                wsdlTasks.add(wsImportTask);
+                tasks.getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).dependsOn(wsImportTask);
             }
 
-            TaskContainer tasks = project.getTasks();
-            tasks.getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).setDependsOn(wsdlTasks);
         });
     }
 

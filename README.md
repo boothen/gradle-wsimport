@@ -8,7 +8,7 @@ Gradle plugin that wraps the [Ant wsimport](https://javaee.github.io/metro-jax-w
 The plugin is registered with [Gradle Plugins](https://plugins.gradle.org/plugin/uk.co.boothen.gradle.wsimport). The simplest way to define and use the plugin in your Gradle build file is 
 ```groovy
 plugins {
-  id "uk.co.boothen.gradle.wsimport" version "0.13"
+  id "uk.co.boothen.gradle.wsimport" version "0.14"
 }
 ```
 
