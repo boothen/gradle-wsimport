@@ -66,7 +66,7 @@ public class WsImportPlugin implements Plugin<Project> {
             int count = 1;
             TaskContainer tasks = project.getTasks();
             for (Wsdl wsdl : wsImportPluginExtension.getWsdls()) {
-                WsImportTask wsImportTask = project.getTasks().create("wsImport-" + count++, WsImportTask.class);
+                WsImportTask wsImportTask = project.getTasks().create("wsImport" + count++, WsImportTask.class);
                 wsImportTask.getKeep().set(wsImportPluginExtension.getKeep());
                 wsImportTask.getExtension().set(wsImportPluginExtension.getExtension());
                 wsImportTask.getVerbose().set(wsImportPluginExtension.getVerbose());
