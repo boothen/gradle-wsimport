@@ -59,9 +59,12 @@ public abstract class WsImportWorkAction implements WorkAction<WsImportWorkParam
             wsImport2.setWsdllocation(wsdl.getWsdlLocation());
         }
 
+        if (!"".equals(wsdl.getCatalog())) {
+            wsImport2.setCatalog(new File(wsdl.getCatalog()));
+        }
+
         // TODO: Expose some of this properties
 //        wsImport2.setXauthfile();
-//        wsImport2.setCatalog();
 //        wsImport2.setClientjar();
 //        wsImport2.setdisableAuthenticator();
 //        wsImport2.setGenerateJWS();

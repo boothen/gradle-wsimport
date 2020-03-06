@@ -1,4 +1,5 @@
 plugins {
+    id 'groovy-base'
     id 'java-gradle-plugin'
     id 'maven-publish'
     id "com.gradle.plugin-publish" version "0.9.10"
@@ -16,6 +17,8 @@ dependencies {
     implementation group: 'javax.jws', name: 'javax.jws-api', version: '1.1'
 
     implementation gradleApi()
+
+    testImplementation group: 'org.spockframework', name:'spock-core', version:'1.3-groovy-2.5'
 }
 
 group = "uk.co.boothen.gradle"
