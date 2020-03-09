@@ -50,7 +50,7 @@ pluginBundle {
 }
 
 tasks.withType(JavaCompile) {
-    sourceCompatibility = '11'
-    targetCompatibility = '11'
+    sourceCompatibility = "${javacVersion}"
+    targetCompatibility = "${javacVersion}"
     options.encoding = 'UTF-8'
 }
