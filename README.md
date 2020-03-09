@@ -8,7 +8,7 @@ Gradle plugin that wraps the [Ant wsimport](https://javaee.github.io/metro-jax-w
 The plugin is registered with [Gradle Plugins](https://plugins.gradle.org/plugin/uk.co.boothen.gradle.wsimport). The simplest way to define and use the plugin in your Gradle build file is 
 ```groovy
 plugins {
-  id "uk.co.boothen.gradle.wsimport" version "0.15"
+  id "uk.co.boothen.gradle.wsimport" version "0.16"
 }
 ```
 
@@ -61,6 +61,7 @@ wsimport {
         extraArg("-J-Djavax.xml.accessExternalDTD=all")
         packageName("com.different.package.name")
         wsdlLocation("schema/schema.wsdl")
+        catalog("catalog/jax-ws-catalog.xml")
     }
 
     wsdl ("find/Find.wsdl") {
@@ -105,6 +106,7 @@ extraArg | String/List | Additional command line arguments passed to the wsimpor
 xjcarg | String/List | Arguments are directly passed to the XJC tool (JAXB Schema Compiler), which will be used for compiling the schema referenced in the wsdl 
 packageName | String | 	Specifies the target package |
 wsdlLocation | String | The wsdl URI passed thru this option will be used to set the value of @WebService.wsdlLocation and @WebServiceClient.wsdlLocation annotation elements on the generated SEI and Service interface. Defaults to the wsdl URL passed to wsdl attribute. |
+catalog | String | Specify a catalog file to resolve external entity references. Option supports the TR9401, XCatalog and OASIS XML Catalog formats. 
 
 
 ## To Do
