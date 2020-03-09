@@ -111,7 +111,6 @@ wsdlLocation | String | The wsdl URI passed thru this option will be used to set
 The following properties have not been exposed from the Ant task to the plugin. If you need any of them in your configuration submit a PR or an Issue and we'll add it in.
 ```
 //        wsImport2.setXauthfile();
-//        wsImport2.setCatalog();
 //        wsImport2.setClientjar();
 //        wsImport2.setdisableAuthenticator();
 //        wsImport2.setGenerateJWS();
