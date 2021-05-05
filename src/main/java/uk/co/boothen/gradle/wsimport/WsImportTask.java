@@ -53,6 +53,7 @@ public class WsImportTask extends DefaultTask {
     private Property<String> wsdlSourceRoot;
     private Property<File> generatedSourceRoot;
     private Property<File> generatedClassesRoot;
+    private Property<File> projectDir;
 
     @Inject
     public WsImportTask(WorkerExecutor workerExecutor) {
@@ -73,6 +74,7 @@ public class WsImportTask extends DefaultTask {
         wsdlSourceRoot = getProject().getObjects().property(String.class);
         generatedSourceRoot = getProject().getObjects().property(File.class);
         generatedClassesRoot = getProject().getObjects().property(File.class);
+        projectDir = getProject().getObjects().property(File.class);
     }
 
     @Input
@@ -140,6 +142,11 @@ public class WsImportTask extends DefaultTask {
         return wsdl;
     }
 
+    @Input
+    public Property<File> getProjectDir() {
+        return projectDir;
+    }
+
     @InputFiles
     @PathSensitive(PathSensitivity.NAME_ONLY)
     public Property<Configuration> getJaxwsToolsConfiguration() {
@@ -180,7 +187,7 @@ public class WsImportTask extends DefaultTask {
             parameters.getGeneratedSourceRoot().set(generatedSourceRoot);
             parameters.getGeneratedClassesRoot().set(generatedClassesRoot);
             parameters.getWsdl().set(wsdl);
-            parameters.getProjectRoot().set(getProject().getProjectDir());
+            parameters.getProjectRoot().set(projectDir);
         });
 
     }

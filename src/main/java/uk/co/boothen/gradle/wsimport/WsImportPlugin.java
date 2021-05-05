@@ -83,6 +83,7 @@ public class WsImportPlugin implements Plugin<Project> {
                 wsImportTask.getWsdlSourceRoot().set(wsdlSourceRoot);
                 wsImportTask.getGeneratedSourceRoot().set(generatedSourceRoot);
                 wsImportTask.getGeneratedClassesRoot().set(generatedClassesRoot);
+                wsImportTask.getProjectDir().set(project.getProjectDir());
                 tasks.getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).dependsOn(wsImportTask);
             }
 
