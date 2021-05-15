@@ -17,7 +17,8 @@ package uk.co.boothen.gradle.wsimport;
 
 import groovy.lang.Closure;
 
-import org.gradle.util.ConfigureUtil;
+import org.gradle.api.Action;
+import org.gradle.util.ClosureBackedAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +38,9 @@ public class WsImportPluginExtension {
     private boolean xadditionalHeaders;
     private boolean xNoAddressingDatabinding;
     private boolean xdebug;
+    private boolean includeDependencies = true;
 
-    private String target = "2.2";
+    private String target = "3.0";
     private String encoding  = "UTF-8";
     private List<Wsdl> wsdls = new ArrayList<>();
 
@@ -98,6 +100,10 @@ public class WsImportPluginExtension {
         return encoding;
     }
 
+    public boolean getIncludeDependencies() {
+        return includeDependencies;
+    }
+
     public void setWsdlSourceRoot(String wsdlSourceRoot) {
         this.wsdlSourceRoot = wsdlSourceRoot;
     }
@@ -154,6 +160,10 @@ public class WsImportPluginExtension {
         this.encoding = encoding;
     }
 
+    public void setIncludeDependencies(boolean includeDependencies) {
+        this.includeDependencies = includeDependencies;
+    }
+
     public void setWsdl(String file) {
         Wsdl wsdl = new Wsdl(file);
         wsdls.add(wsdl);
@@ -165,8 +175,12 @@ public class WsImportPluginExtension {
     }
 
     public void wsdl(String file, Closure<?> closure) {
+        wsdl(file, ClosureBackedAction.of(closure));
+    }
+
+    public void wsdl(String file, Action<Wsdl> action) {
         Wsdl wsdl = new Wsdl(file);
-        wsdl = ConfigureUtil.configure(closure, wsdl);
+        action.execute(wsdl);
         wsdls.add(wsdl);
     }
 

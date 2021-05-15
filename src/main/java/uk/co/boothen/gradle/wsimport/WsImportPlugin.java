@@ -40,14 +40,17 @@ public class WsImportPlugin implements Plugin<Project> {
 
         project.getExtensions().add("wsimport", WsImportPluginExtension.class);
 
+        Configuration jaxWsTools = project.getConfigurations().create("jaxWsTools");
+        jaxWsTools.defaultDependencies(dependencies -> dependencies.add(project.getDependencies().create("com.sun.xml.ws:jaxws-tools:3.0.1")));
+
         project.afterEvaluate(action -> {
             WsImportPluginExtension wsImportPluginExtension = action.getExtensions().getByType(WsImportPluginExtension.class);
 
-            Configuration jaxWsTools = project.getConfigurations().create("jaxWsTools");
-            project.getDependencies().add("jaxWsTools", "com.sun.xml.ws:jaxws-tools:2.3.2");
-            project.getDependencies().add("implementation", "javax.xml.bind:jaxb-api:2.3.1");
-            project.getDependencies().add("implementation", "javax.xml.ws:jaxws-api:2.3.1");
-            project.getDependencies().add("implementation", "javax.jws:javax.jws-api:1.1");
+            if (wsImportPluginExtension.getIncludeDependencies()) {
+                project.getDependencies().add("implementation", "jakarta.xml.bind:jakarta.xml.bind-api:3.0.1");
+                project.getDependencies().add("implementation", "jakarta.xml.ws:jakarta.xml.ws-api:3.0.1");
+                project.getDependencies().add("implementation", "jakarta.jws:jakarta.jws-api:3.0.0");
+            }
 
             if (!project.getPlugins().hasPlugin(JavaPlugin.class)) {
                 Logger logger = project.getLogger();

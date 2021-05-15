@@ -149,7 +149,7 @@ public class WsImportTask extends DefaultTask {
 
     @InputFiles
     @PathSensitive(PathSensitivity.NAME_ONLY)
-    public Property<Configuration> getJaxwsToolsConfiguration() {
+    public Property<Configuration>  getJaxwsToolsConfiguration() {
         return jaxwsToolsConfiguration;
     }
 
