@@ -133,7 +133,7 @@ wsimport {
     includeDependencies = false
     
     // Set JAXWS specification to 2.2
-    target = 2.2
+    target = "2.2"
 
     wsdl = "create/Create.wsdl""
     ...
