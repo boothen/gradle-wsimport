@@ -1,8 +1,6 @@
 plugins {
     id 'groovy-base'
-    id 'java-gradle-plugin'
-    id 'maven-publish'
-    id "com.gradle.plugin-publish" version "0.14.0"
+    id "com.gradle.plugin-publish" version "1.2.0"
 }
 
 repositories {
@@ -25,15 +23,6 @@ group = "uk.co.boothen.gradle"
 version = "${pluginVersion}"
 
 gradlePlugin {
-    plugins {
-        wsImportPlugin {
-            id = "uk.co.boothen.gradle.wsimport"
-            implementationClass = "uk.co.boothen.gradle.wsimport.WsImportPlugin"
-        }
-    }
-}
-
-pluginBundle {
     website = "https://github.com/boothen/gradle-wsimport"
     vcsUrl = "https://github.com/boothen/gradle-wsimport"
     description = "Gradle Plugin to wrap the Ant Task WSImport. Allowing easier configuration."
@@ -41,9 +30,10 @@ pluginBundle {
     plugins {
         wsImportPlugin {
             id = "uk.co.boothen.gradle.wsimport"
+            implementationClass = "uk.co.boothen.gradle.wsimport.WsImportPlugin"
             displayName = "WsImport plugin"
             description = "Yet another WsImport Gradle plugin - requires Java 11 and Gradle 5.6 or greater. If you're using an earlier version of Java or Gradle use 0.10. If you're still on Gradle 3.x use version 0.3 of this plugin."
-            tags = ['wsimport', 'plugin']
+            tags.addAll('wsimport', 'plugin')
 
         }
     }

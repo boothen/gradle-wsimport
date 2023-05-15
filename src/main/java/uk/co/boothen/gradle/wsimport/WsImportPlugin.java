@@ -17,20 +17,22 @@ package uk.co.boothen.gradle.wsimport;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.UnknownTaskException;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.util.GradleVersion;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
 public class WsImportPlugin implements Plugin<Project> {
 
     @Override
-    public void apply(Project project) {
+    public void apply(@NotNull Project project) {
 
         if (GradleVersion.current().compareTo(GradleVersion.version("5.6")) < 0) {
             Logger logger = project.getLogger();
@@ -58,8 +60,8 @@ public class WsImportPlugin implements Plugin<Project> {
                 throw new IllegalStateException("No java plugin detected. Enable java plugin.");
             }
 
-            JavaPluginConvention javaPluginConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
-            SourceSet javaMain = javaPluginConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+            JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
+            SourceSet javaMain = javaPluginExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
 
             String wsdlSourceRoot = Util.mergePaths(project.getProjectDir().getAbsolutePath(), wsImportPluginExtension.getWsdlSourceRoot());
             File generatedSourceRoot = Util.mergeFile(project.getBuildDir(), wsImportPluginExtension.getGeneratedSourceRoot());
@@ -69,7 +71,10 @@ public class WsImportPlugin implements Plugin<Project> {
             int count = 1;
             TaskContainer tasks = project.getTasks();
             for (Wsdl wsdl : wsImportPluginExtension.getWsdls()) {
-                WsImportTask wsImportTask = project.getTasks().create("wsImport" + count++, WsImportTask.class);
+                WsImportTask wsImportTask = tasks.register("wsImport" + count++, WsImportTask.class).getOrNull();
+                if (wsImportTask == null) {
+                    continue;
+                }
                 wsImportTask.getKeep().set(wsImportPluginExtension.getKeep());
                 wsImportTask.getExtension().set(wsImportPluginExtension.getExtension());
                 wsImportTask.getVerbose().set(wsImportPluginExtension.getVerbose());
@@ -88,6 +93,11 @@ public class WsImportPlugin implements Plugin<Project> {
                 wsImportTask.getGeneratedClassesRoot().set(generatedClassesRoot);
                 wsImportTask.getProjectDir().set(project.getProjectDir());
                 tasks.getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).dependsOn(wsImportTask);
+                try {
+                    tasks.getByName(javaMain.getSourcesJarTaskName()).dependsOn(wsImportTask);
+                } catch (UnknownTaskException ignored) {
+
+                }
             }
 
         });
