@@ -83,23 +83,23 @@ wsimport {
 
 ### Java Source and Compilation properties
 
-Name | Type | Description | Default
---- | --- | --- | ---
-wsdlSourceRoot | String | Directory location of WSDL files | src/main/resources/wsdl 
-generatedSourceRoot | String | Directory location of the generated Java source files | build/generated/src/wsdl/main 
-generatedClassesRoot | String | Directory location of the generated classes | build/classes/java/main 
-includeDependencies | boolean | Include the required Jakarta XML/JWS as Gradle Implementation dependencies  | true
-target | String | 	Generate code as per the given JAXWS specification version. For example, 2.0 value generates compliant code for JAXWS 2.0 spec. | 3.0 
-keep | boolean | Keep generated source code files | true 
-encoding | String | Set the encoding name for generated sources | UTF-8 
+Name | Type | Description                                                                                                                                                                                   | Default
+--- | --- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| ---
+wsdlSourceRoot | String | Location of WSDL files. Can be a directory within the project or HTTP address.                                                                                                                | src/main/resources/wsdl 
+generatedSourceRoot | String | Directory location of the generated Java source files                                                                                                                                         | build/generated/src/wsdl/main 
+generatedClassesRoot | String | Directory location of the generated classes                                                                                                                                                   | build/classes/java/main 
+includeDependencies | boolean | Include the required Jakarta XML/JWS as Gradle Implementation dependencies                                                                                                                    | true
+target | String | 	Generate code as per the given JAXWS specification version. For example, 2.0 value generates compliant code for JAXWS 2.0 spec.                                                              | 3.0 
+keep | boolean | Keep generated source code files                                                                                                                                                              | true 
+encoding | String | Set the encoding name for generated sources                                                                                                                                                   | UTF-8 
 extension | boolean | allow vendor extensions (functionality not specified by the specification). Use of extensions may result in applications that are not portable or may not interoperate with other implementations. | false 
-verbose | boolean | Output JAX-WS RI version and messages about what the compiler is doing | false 
-quiet | boolean | Suppress wsimport output. | true 
-debug | boolean | Print debug information. | false
-xdebug | boolean | Print debug information. **Set this to true to see details around failing WSDL generation** | false
-xnocompile | boolean | Do not compile generated Java files | true 
-xadditionalHeaders | boolean | 	Map headers not bound to request or response message to Java method parameters. | false
-xNoAddressingDatabinding | boolean | Enable binding of W3C EndpointReferenceType to Java. | false
+verbose | boolean | Output JAX-WS RI version and messages about what the compiler is doing                                                                                                                        | false 
+quiet | boolean | Suppress wsimport output.                                                                                                                                                                     | true 
+debug | boolean | Print debug information.                                                                                                                                                                      | false
+xdebug | boolean | Print debug information. **Set this to true to see details around failing WSDL generation**                                                                                                   | false
+xnocompile | boolean | Do not compile generated Java files                                                                                                                                                           | true 
+xadditionalHeaders | boolean | 	Map headers not bound to request or response message to Java method parameters.                                                                                                              | false
+xNoAddressingDatabinding | boolean | Enable binding of W3C EndpointReferenceType to Java.                                                                                                                                          | false
 
 ### WSDL file additional configuration properties
 

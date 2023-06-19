@@ -63,7 +63,8 @@ public class WsImportPlugin implements Plugin<Project> {
             JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
             SourceSet javaMain = javaPluginExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
 
-            String wsdlSourceRoot = Util.mergePaths(project.getProjectDir().getAbsolutePath(), wsImportPluginExtension.getWsdlSourceRoot());
+            String wsdlSourceRoot = wsImportPluginExtension.getWsdlSourceRoot().matches("(?i)^(http|https)://.*") ? wsImportPluginExtension.getWsdlSourceRoot()
+                                                                                                                  : Util.mergePaths(project.getProjectDir().getAbsolutePath(), wsImportPluginExtension.getWsdlSourceRoot());
             File generatedSourceRoot = Util.mergeFile(project.getBuildDir(), wsImportPluginExtension.getGeneratedSourceRoot());
             File generatedClassesRoot = Util.mergeFile(project.getBuildDir(), wsImportPluginExtension.getGeneratedClassesRoot());
             javaMain.getJava().srcDir(generatedSourceRoot);
