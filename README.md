@@ -14,7 +14,7 @@ plugins {
 
 ## Simple configuration
 
-The plugin is intend to be as configuration light as possible. Using default values for most configuration properties. Therefore, it should be possible to generate and compile Java source classes from a WSDL file with just the following configuration.
+The plugin is intended to be as configuration light as possible. Using default values for most configuration properties. Therefore, it should be possible to generate and compile Java source classes from a WSDL file with just the following configuration.
 
 ```groovy
 wsimport {
