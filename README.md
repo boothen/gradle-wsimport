@@ -8,7 +8,7 @@ Gradle plugin that wraps the [Ant wsimport](https://javaee.github.io/metro-jax-w
 The plugin is registered with [Gradle Plugins](https://plugins.gradle.org/plugin/uk.co.boothen.gradle.wsimport). The simplest way to define and use the plugin in your Gradle build file is 
 ```groovy
 plugins {
-  id "uk.co.boothen.gradle.wsimport" version "0.20"
+  id "uk.co.boothen.gradle.wsimport" version "0.21"
 }
 ```
 
@@ -62,6 +62,7 @@ wsimport {
         bindingFile("create/bindings-create.xml")
         xjcarg("-XautoNameResolution")
         extraArg("-J-Djavax.xml.accessExternalDTD=all")
+        extraArg("-J-Djavax.xml.accessExternalSchema=all")
         packageName("com.different.package.name")
         wsdlLocation("schema/schema.wsdl")
         catalog("catalog/jax-ws-catalog.xml")
@@ -103,14 +104,14 @@ xNoAddressingDatabinding | boolean | Enable binding of W3C EndpointReferenceType
 
 ### WSDL file additional configuration properties
 
-Name | Type | Description
---- | --- | ---
-bindingFile | String/List | Binding File |
-extraArg | String/List | Additional command line arguments passed to the wsimport |
-xjcarg | String/List | Arguments are directly passed to the XJC tool (JAXB Schema Compiler), which will be used for compiling the schema referenced in the wsdl 
-packageName | String | 	Specifies the target package |
+Name | Type | Description                                                                                                                                                                                                                                         
+--- | --- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+bindingFile | String/List | Binding File                                                                                                                                                                                                                                        |
+extraArg | String/List | Additional command line arguments passed to the wsimport. Possible values are<br/> -J-Djavax.xml.accessExternalDTD=all<br/> -J-Djavax.xml.accessExternalSchema=all                                                                                       |                                                                                       |                                                                                                                                                                                          |                                                                                                                                                                                          |
+xjcarg | String/List | Arguments are directly passed to the XJC tool (JAXB Schema Compiler), which will be used for compiling the schema referenced in the wsdl                                                                                                            
+packageName | String | 	Specifies the target package                                                                                                                                                                                                                       |
 wsdlLocation | String | The wsdl URI passed thru this option will be used to set the value of @WebService.wsdlLocation and @WebServiceClient.wsdlLocation annotation elements on the generated SEI and Service interface. Defaults to the wsdl URL passed to wsdl attribute. |
-catalog | String | Specify a catalog file to resolve external entity references. Option supports the TR9401, XCatalog and OASIS XML Catalog formats. 
+catalog | String | Specify a catalog file to resolve external entity references. Option supports the TR9401, XCatalog and OASIS XML Catalog formats.                                                                                                                   
 
 ## Jakarta packages vs Javax packages
 

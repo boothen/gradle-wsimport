@@ -18,9 +18,10 @@ package uk.co.boothen.gradle.wsimport;
 import com.sun.tools.ws.ant.WsImport2;
 
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.types.Commandline;
 import org.apache.tools.ant.types.FileSet;
 import org.gradle.workers.WorkAction;
+
+import uk.co.boothen.gradle.wsimport.log.ExtendedAntLoggingAdapter;
 
 import java.io.File;
 import java.util.List;
@@ -77,9 +78,13 @@ public abstract class WsImportWorkAction implements WorkAction<WsImportWorkParam
             wsImport2.createXjcarg().setValue(wsdlXjcArg);
         }
 
-        Commandline.Argument extraArgs = wsImport2.createArg();
         for (String extraArg : wsdl.getExtraArgs()) {
-            extraArgs.setValue(extraArg);
+            wsImport2.createArg().setValue(extraArg);
+            // When not forking the VM we have to set extraArgs as system properties directly.
+            if (extraArg.startsWith("-J-D")  && extraArg.contains("=")) {
+                String[] nameAndValue = extraArg.split("=");
+                System.setProperty(nameAndValue[0].substring(4), nameAndValue[1]);
+            }
         }
 
         for (File binding : bindingFiles(wsdl, wsdlSourceRoot)) {
@@ -89,10 +94,12 @@ public abstract class WsImportWorkAction implements WorkAction<WsImportWorkParam
         FileSet fileSet = new FileSet();
         Project project = new Project();
         project.setBaseDir(getParameters().getProjectRoot().get());
+        project.addBuildListener(new ExtendedAntLoggingAdapter());
         fileSet.setProject(project);
         fileSet.setDir(getParameters().getGeneratedClassesRoot().get());
         wsImport2.setProject(project);
         wsImport2.addConfiguredProduces(fileSet);
+        wsImport2.setTaskName("wsImport");
         wsImport2.execute();
     }
 

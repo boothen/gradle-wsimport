@@ -32,7 +32,7 @@ gradlePlugin {
             id = "uk.co.boothen.gradle.wsimport"
             implementationClass = "uk.co.boothen.gradle.wsimport.WsImportPlugin"
             displayName = "WsImport plugin"
-            description = "Yet another WsImport Gradle plugin - requires Java 11 and Gradle 5.6 or greater. If you're using an earlier version of Java or Gradle use 0.10. If you're still on Gradle 3.x use version 0.3 of this plugin."
+            description = "Yet another WsImport Gradle plugin - requires Java 11 and Gradle 6.0 or greater."
             tags.addAll('wsimport')
 
         }
