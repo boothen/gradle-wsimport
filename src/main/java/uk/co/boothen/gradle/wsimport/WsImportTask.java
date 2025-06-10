@@ -17,6 +17,7 @@ package uk.co.boothen.gradle.wsimport;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
@@ -29,6 +30,7 @@ import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
 
 import java.io.File;
+import java.util.Collections;
 
 import javax.inject.Inject;
 
@@ -49,7 +51,7 @@ public class WsImportTask extends DefaultTask {
     private Property<Boolean> xdebug;
     private Property<String> target;
     private Property<String> encoding;
-    private Property<Wsdl> wsdl;
+    private ListProperty<Wsdl> wsdls;
     private Property<String> wsdlSourceRoot;
     private Property<File> generatedSourceRoot;
     private Property<File> generatedClassesRoot;
@@ -70,7 +72,7 @@ public class WsImportTask extends DefaultTask {
         xdebug = getProject().getObjects().property(Boolean.class);
         target = getProject().getObjects().property(String.class);
         encoding = getProject().getObjects().property(String.class);
-        wsdl = getProject().getObjects().property(Wsdl.class);
+        wsdls = getProject().getObjects().listProperty(Wsdl.class);
         wsdlSourceRoot = getProject().getObjects().property(String.class);
         generatedSourceRoot = getProject().getObjects().property(File.class);
         generatedClassesRoot = getProject().getObjects().property(File.class);
@@ -138,8 +140,8 @@ public class WsImportTask extends DefaultTask {
     }
 
     @Input
-    public Property<Wsdl> getWsdl() {
-        return wsdl;
+    public ListProperty<Wsdl> getWsdls() {
+        return wsdls;
     }
 
     @Input
@@ -169,26 +171,30 @@ public class WsImportTask extends DefaultTask {
             workerSpec.getClasspath().from(jaxwsToolsConfiguration);
         });
 
-        workQueue.submit(WsImportWorkAction.class, parameters -> {
-            parameters.getKeep().set(keep);
-            parameters.getExtension().set(extension);
-            parameters.getVerbose().set(verbose);
-            parameters.getQuiet().set(quiet);
-            parameters.getDebug().set(debug);
-            parameters.getXnocompile().set(xnocompile);
-            parameters.getXadditionalHeaders().set(xadditionalHeaders);
-            parameters.getXNoAddressingDatabinding().set(xNoAddressingDatabinding);
-            parameters.getXdebug().set(xdebug);
+        for (Wsdl wsdl : wsdls.getOrElse(Collections.emptyList())) {
+            workQueue.submit(WsImportWorkAction.class, parameters -> {
+                parameters.getKeep().set(keep);
+                parameters.getExtension().set(extension);
+                parameters.getVerbose().set(verbose);
+                parameters.getQuiet().set(quiet);
+                parameters.getDebug().set(debug);
+                parameters.getXnocompile().set(xnocompile);
+                parameters.getXadditionalHeaders().set(xadditionalHeaders);
+                parameters.getXNoAddressingDatabinding().set(xNoAddressingDatabinding);
+                parameters.getXdebug().set(xdebug);
 
-            parameters.getTarget().set(target);
-            parameters.getEncoding().set(encoding);
+                parameters.getTarget().set(target);
+                parameters.getEncoding().set(encoding);
 
-            parameters.getWsdlSourceRoot().set(wsdlSourceRoot);
-            parameters.getGeneratedSourceRoot().set(generatedSourceRoot);
-            parameters.getGeneratedClassesRoot().set(generatedClassesRoot);
-            parameters.getWsdl().set(wsdl);
-            parameters.getProjectRoot().set(projectDir);
-        });
+                parameters.getWsdlSourceRoot().set(wsdlSourceRoot);
+                parameters.getGeneratedSourceRoot().set(generatedSourceRoot);
+                parameters.getGeneratedClassesRoot().set(generatedClassesRoot);
+                parameters.getWsdl().set(wsdl);
+                parameters.getProjectRoot().set(projectDir);
+            });
+            // The order in which the wsdl's are processed is relevant.
+            workQueue.await();
+        }
 
     }
 
