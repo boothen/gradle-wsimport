@@ -76,37 +76,34 @@ public class WsImportPlugin implements Plugin<Project> {
             }
             javaMain.getJava().srcDir(generatedSourceRoot);
 
-            int count = 1;
             TaskContainer tasks = project.getTasks();
-            for (Wsdl wsdl : wsImportPluginExtension.getWsdls()) {
-                WsImportTask wsImportTask = tasks.register("wsImport" + count++, WsImportTask.class).getOrNull();
-                if (wsImportTask == null) {
-                    continue;
-                }
+            WsImportTask wsImportTask = tasks.register("wsImport1", WsImportTask.class).getOrNull();
+            if (wsImportTask == null) {
+                return;
+            }
 
-                wsImportTask.getKeep().set(wsImportPluginExtension.getKeep());
-                wsImportTask.getExtension().set(wsImportPluginExtension.getExtension());
-                wsImportTask.getVerbose().set(wsImportPluginExtension.getVerbose());
-                wsImportTask.getQuiet().set(wsImportPluginExtension.getQuiet());
-                wsImportTask.getDebug().set(wsImportPluginExtension.getDebug());
-                wsImportTask.getXnocompile().set(wsImportPluginExtension.getXnocompile());
-                wsImportTask.getXadditionalHeaders().set(wsImportPluginExtension.getXadditionalHeaders());
-                wsImportTask.getTarget().set(wsImportPluginExtension.getTarget());
-                wsImportTask.getEncoding().set(wsImportPluginExtension.getEncoding());
-                wsImportTask.getXNoAddressingDatabinding().set(wsImportPluginExtension.getXNoAddressingDatabinding());
-                wsImportTask.getXdebug().set(wsImportPluginExtension.getXdebug());
-                wsImportTask.getWsdl().set(wsdl);
-                wsImportTask.getJaxwsToolsConfiguration().set(jaxWsTools);
-                wsImportTask.getWsdlSourceRoot().set(wsdlSourceRoot);
-                wsImportTask.getGeneratedSourceRoot().set(generatedSourceRoot);
-                wsImportTask.getGeneratedClassesRoot().set(generatedClassesRoot);
-                wsImportTask.getProjectDir().set(project.getProjectDir());
-                tasks.getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).dependsOn(wsImportTask);
-                try {
-                    tasks.getByName(javaMain.getSourcesJarTaskName()).dependsOn(wsImportTask);
-                } catch (UnknownTaskException ignored) {
+            wsImportTask.getKeep().set(wsImportPluginExtension.getKeep());
+            wsImportTask.getExtension().set(wsImportPluginExtension.getExtension());
+            wsImportTask.getVerbose().set(wsImportPluginExtension.getVerbose());
+            wsImportTask.getQuiet().set(wsImportPluginExtension.getQuiet());
+            wsImportTask.getDebug().set(wsImportPluginExtension.getDebug());
+            wsImportTask.getXnocompile().set(wsImportPluginExtension.getXnocompile());
+            wsImportTask.getXadditionalHeaders().set(wsImportPluginExtension.getXadditionalHeaders());
+            wsImportTask.getTarget().set(wsImportPluginExtension.getTarget());
+            wsImportTask.getEncoding().set(wsImportPluginExtension.getEncoding());
+            wsImportTask.getXNoAddressingDatabinding().set(wsImportPluginExtension.getXNoAddressingDatabinding());
+            wsImportTask.getXdebug().set(wsImportPluginExtension.getXdebug());
+            wsImportTask.getWsdls().set(wsImportPluginExtension.getWsdls());
+            wsImportTask.getJaxwsToolsConfiguration().set(jaxWsTools);
+            wsImportTask.getWsdlSourceRoot().set(wsdlSourceRoot);
+            wsImportTask.getGeneratedSourceRoot().set(generatedSourceRoot);
+            wsImportTask.getGeneratedClassesRoot().set(generatedClassesRoot);
+            wsImportTask.getProjectDir().set(project.getProjectDir());
+            tasks.getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).dependsOn(wsImportTask);
+            try {
+                tasks.getByName(javaMain.getSourcesJarTaskName()).dependsOn(wsImportTask);
+            } catch (UnknownTaskException ignored) {
 
-                }
             }
 
         });

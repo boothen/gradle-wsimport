@@ -35,27 +35,29 @@ public class Wsdl implements Serializable {
         this.file = file;
     }
 
+    @Input
     public String getFile() {
         return file;
-    }
-
-    public String getPackageName() {
-        return packageName;
     }
 
     public void setFile(String file) {
         this.file = file;
     }
 
+    @Input
+    public String getPackageName() {
+        return packageName;
+    }
+
     public void setPackageName(String packageName) {
         this.packageName = packageName;
     }
 
-    @Input
     public void packageName(String packageName) {
         this.packageName = packageName;
     }
 
+    @Input
     public String getWsdlLocation() {
         return wsdlLocation;
     }
@@ -64,11 +66,11 @@ public class Wsdl implements Serializable {
         this.wsdlLocation = wsdlLocation;
     }
 
-    @Input
     public void wsdlLocation(String wsdlLocation) {
         this.wsdlLocation = wsdlLocation;
     }
 
+    @Input
     public List<String> getBindingFiles() {
         return bindingFiles;
     }
@@ -77,11 +79,11 @@ public class Wsdl implements Serializable {
         this.bindingFiles = bindingFiles;
     }
 
-    @Input
     public void bindingFile(String bindingFile) {
         bindingFiles.add(bindingFile);
     }
 
+    @Input
     public List<String> getXjcargs() {
         return xjcargs;
     }
@@ -90,11 +92,11 @@ public class Wsdl implements Serializable {
         this.xjcargs = xjcargs;
     }
 
-    @Input
     public void xjcarg(String xjcarg) {
         this.xjcargs.add(xjcarg);
     }
 
+    @Input
     public List<String> getExtraArgs() {
         return extraArgs;
     }
@@ -103,16 +105,15 @@ public class Wsdl implements Serializable {
         this.extraArgs = extraArgs;
     }
 
-    @Input
     public void extraArg(String extraArg) {
         this.extraArgs.add(extraArg);
     }
 
+    @Input
     public String getCatalog() {
         return catalog;
     }
 
-    @Input
     public void setCatalog(String catalog) {
         this.catalog = catalog;
     }
