@@ -18,7 +18,6 @@ package uk.co.boothen.gradle.wsimport;
 import groovy.lang.Closure;
 
 import org.gradle.api.Action;
-import org.gradle.util.ClosureBackedAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -175,7 +174,10 @@ public class WsImportPluginExtension {
     }
 
     public void wsdl(String file, Closure<?> closure) {
-        wsdl(file, ClosureBackedAction.of(closure));
+        wsdl(file, report -> {
+            closure.setDelegate(report);
+            closure.call(report);
+        });
     }
 
     public void wsdl(String file, Action<Wsdl> action) {
