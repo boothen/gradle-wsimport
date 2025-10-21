@@ -24,7 +24,6 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.TaskContainer;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,7 +61,8 @@ public class WsImportPlugin implements Plugin<Project> {
             }
 
             String wsdlSourceRoot = wsImportPluginExtension.getWsdlSourceRoot().matches("(?i)^(http|https)://.*") ? wsImportPluginExtension.getWsdlSourceRoot()
-                                                                                                                  : Util.mergePaths(project.getProjectDir().getAbsolutePath(), wsImportPluginExtension.getWsdlSourceRoot());
+                                                                                                                  : Util.mergePaths(project.getProjectDir().getAbsolutePath(),
+                                                                                                                                    wsImportPluginExtension.getWsdlSourceRoot());
             File generatedSourceRoot = Util.mergeFile(project.getBuildDir(), wsImportPluginExtension.getGeneratedSourceRoot());
             File generatedClassesRoot = Util.mergeFile(project.getBuildDir(), wsImportPluginExtension.getGeneratedClassesRoot());
 
@@ -76,36 +76,34 @@ public class WsImportPlugin implements Plugin<Project> {
             }
             javaMain.getJava().srcDir(generatedSourceRoot);
 
-            TaskContainer tasks = project.getTasks();
-            WsImportTask wsImportTask = tasks.register("wsImport1", WsImportTask.class).getOrNull();
-            if (wsImportTask == null) {
-                return;
-            }
+            WsImportTask wsImport = project.getTasks().register("wsImport", WsImportTask.class, wsImportTask -> {
 
-            wsImportTask.getKeep().set(wsImportPluginExtension.getKeep());
-            wsImportTask.getExtension().set(wsImportPluginExtension.getExtension());
-            wsImportTask.getVerbose().set(wsImportPluginExtension.getVerbose());
-            wsImportTask.getQuiet().set(wsImportPluginExtension.getQuiet());
-            wsImportTask.getDebug().set(wsImportPluginExtension.getDebug());
-            wsImportTask.getXnocompile().set(wsImportPluginExtension.getXnocompile());
-            wsImportTask.getXadditionalHeaders().set(wsImportPluginExtension.getXadditionalHeaders());
-            wsImportTask.getTarget().set(wsImportPluginExtension.getTarget());
-            wsImportTask.getEncoding().set(wsImportPluginExtension.getEncoding());
-            wsImportTask.getXNoAddressingDatabinding().set(wsImportPluginExtension.getXNoAddressingDatabinding());
-            wsImportTask.getXdebug().set(wsImportPluginExtension.getXdebug());
-            wsImportTask.getWsdls().set(wsImportPluginExtension.getWsdls());
-            wsImportTask.getJaxwsToolsConfiguration().set(jaxWsTools);
-            wsImportTask.getWsdlSourceRoot().set(wsdlSourceRoot);
-            wsImportTask.getGeneratedSourceRoot().set(generatedSourceRoot);
-            wsImportTask.getGeneratedClassesRoot().set(generatedClassesRoot);
-            wsImportTask.getProjectDir().set(project.getProjectDir());
-            tasks.getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).dependsOn(wsImportTask);
+                wsImportTask.getKeep().set(wsImportPluginExtension.getKeep());
+                wsImportTask.getExtension().set(wsImportPluginExtension.getExtension());
+                wsImportTask.getVerbose().set(wsImportPluginExtension.getVerbose());
+                wsImportTask.getQuiet().set(wsImportPluginExtension.getQuiet());
+                wsImportTask.getDebug().set(wsImportPluginExtension.getDebug());
+                wsImportTask.getXnocompile().set(wsImportPluginExtension.getXnocompile());
+                wsImportTask.getXadditionalHeaders().set(wsImportPluginExtension.getXadditionalHeaders());
+                wsImportTask.getTarget().set(wsImportPluginExtension.getTarget());
+                wsImportTask.getEncoding().set(wsImportPluginExtension.getEncoding());
+                wsImportTask.getXNoAddressingDatabinding().set(wsImportPluginExtension.getXNoAddressingDatabinding());
+                wsImportTask.getXdebug().set(wsImportPluginExtension.getXdebug());
+                wsImportTask.getWsdls().set(wsImportPluginExtension.getWsdls());
+                wsImportTask.getJaxwsToolsConfiguration().from(jaxWsTools);
+                wsImportTask.getWsdlSourceRoot().set(wsdlSourceRoot);
+                wsImportTask.getGeneratedSourceRoot().set(generatedSourceRoot);
+                wsImportTask.getGeneratedClassesRoot().set(generatedClassesRoot);
+                wsImportTask.getProjectDir().set(project.getProjectDir());
+
+            }).getOrNull();
+
+            project.getTasks().getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME).dependsOn(wsImport);
             try {
-                tasks.getByName(javaMain.getSourcesJarTaskName()).dependsOn(wsImportTask);
+                project.getTasks().getByName(javaMain.getSourcesJarTaskName()).dependsOn(wsImport);
             } catch (UnknownTaskException ignored) {
 
             }
-
         });
     }
 

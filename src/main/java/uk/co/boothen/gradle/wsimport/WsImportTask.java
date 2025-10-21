@@ -16,15 +16,14 @@
 package uk.co.boothen.gradle.wsimport;
 
 import org.gradle.api.DefaultTask;
-import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.CacheableTask;
+import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
-import org.gradle.api.tasks.PathSensitive;
-import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
@@ -35,162 +34,92 @@ import java.util.Collections;
 import javax.inject.Inject;
 
 @CacheableTask
-public class WsImportTask extends DefaultTask {
-
-    private final WorkerExecutor workerExecutor;
-
-    private Property<Configuration> jaxwsToolsConfiguration;
-    private Property<Boolean> keep;
-    private Property<Boolean> extension;
-    private Property<Boolean> verbose;
-    private Property<Boolean> quiet;
-    private Property<Boolean> debug;
-    private Property<Boolean> xnocompile;
-    private Property<Boolean> xadditionalHeaders;
-    private Property<Boolean> xNoAddressingDatabinding;
-    private Property<Boolean> xdebug;
-    private Property<String> target;
-    private Property<String> encoding;
-    private ListProperty<Wsdl> wsdls;
-    private Property<String> wsdlSourceRoot;
-    private Property<File> generatedSourceRoot;
-    private Property<File> generatedClassesRoot;
-    private Property<File> projectDir;
+public abstract class WsImportTask extends DefaultTask {
 
     @Inject
-    public WsImportTask(WorkerExecutor workerExecutor) {
-        this.workerExecutor = workerExecutor;
-        jaxwsToolsConfiguration = getProject().getObjects().property(Configuration.class);
-        keep = getProject().getObjects().property(Boolean.class);
-        extension = getProject().getObjects().property(Boolean.class);
-        verbose = getProject().getObjects().property(Boolean.class);
-        quiet = getProject().getObjects().property(Boolean.class);
-        debug = getProject().getObjects().property(Boolean.class);
-        xnocompile = getProject().getObjects().property(Boolean.class);
-        xadditionalHeaders = getProject().getObjects().property(Boolean.class);
-        xNoAddressingDatabinding = getProject().getObjects().property(Boolean.class);
-        xdebug = getProject().getObjects().property(Boolean.class);
-        target = getProject().getObjects().property(String.class);
-        encoding = getProject().getObjects().property(String.class);
-        wsdls = getProject().getObjects().listProperty(Wsdl.class);
-        wsdlSourceRoot = getProject().getObjects().property(String.class);
-        generatedSourceRoot = getProject().getObjects().property(File.class);
-        generatedClassesRoot = getProject().getObjects().property(File.class);
-        projectDir = getProject().getObjects().property(File.class);
-    }
+    protected abstract WorkerExecutor getWorkerExecutor();
 
     @Input
-    public Property<Boolean> getKeep() {
-        return keep;
-    }
+    public abstract Property<Boolean> getKeep();
 
     @Input
-    public Property<Boolean> getExtension() {
-        return extension;
-    }
+    public abstract Property<Boolean> getExtension();
 
     @Input
-    public Property<Boolean> getVerbose() {
-        return verbose;
-    }
+    public abstract Property<Boolean> getVerbose();
 
     @Input
-    public Property<Boolean> getQuiet() {
-        return quiet;
-    }
+    public abstract Property<Boolean> getQuiet();
 
     @Input
-    public Property<Boolean> getDebug() {
-        return debug;
-    }
+    public abstract Property<Boolean> getDebug();
 
     @Input
-    public Property<Boolean> getXnocompile() {
-        return xnocompile;
-    }
+    public abstract Property<Boolean> getXnocompile();
 
     @Input
-    public Property<Boolean> getXadditionalHeaders() {
-        return xadditionalHeaders;
-    }
+    public abstract Property<Boolean> getXadditionalHeaders();
 
     @Input
-    public Property<String> getTarget() {
-        return target;
-    }
+    public abstract Property<String> getTarget();
 
     @Input
-    public Property<String> getEncoding() {
-        return encoding;
-    }
+    public abstract Property<String> getEncoding();
 
     @Input
-    public Property<Boolean> getXNoAddressingDatabinding() {
-        return xNoAddressingDatabinding;
-    }
+    public abstract Property<Boolean> getXNoAddressingDatabinding();
 
     @Input
-    public Property<Boolean> getXdebug() {
-        return xdebug;
-    }
+    public abstract Property<Boolean> getXdebug();
 
     @Input
-    public Property<String> getWsdlSourceRoot() {
-        return wsdlSourceRoot;
-    }
+    public abstract Property<String> getWsdlSourceRoot();
 
     @Input
-    public ListProperty<Wsdl> getWsdls() {
-        return wsdls;
-    }
+    public abstract ListProperty<Wsdl> getWsdls();
 
     @Input
-    public Property<File> getProjectDir() {
-        return projectDir;
-    }
+    public abstract Property<File> getProjectDir();
 
     @InputFiles
-    @PathSensitive(PathSensitivity.NAME_ONLY)
-    public Property<Configuration>  getJaxwsToolsConfiguration() {
-        return jaxwsToolsConfiguration;
-    }
+    @Classpath
+    public abstract ConfigurableFileCollection getJaxwsToolsConfiguration();
 
     @OutputDirectory
-    public Property<File> getGeneratedSourceRoot() {
-        return generatedSourceRoot;
-    }
+    public abstract Property<File> getGeneratedSourceRoot();
 
     @OutputDirectory
-    public Property<File> getGeneratedClassesRoot() {
-        return generatedClassesRoot;
-    }
+    public abstract Property<File> getGeneratedClassesRoot();
 
     @TaskAction
     public void taskAction() {
+
+        WorkerExecutor workerExecutor = getWorkerExecutor();
+
         WorkQueue workQueue = workerExecutor.classLoaderIsolation(workerSpec -> {
-            workerSpec.getClasspath().from(jaxwsToolsConfiguration);
+            workerSpec.getClasspath().from(getJaxwsToolsConfiguration());
         });
 
-        for (Wsdl wsdl : wsdls.getOrElse(Collections.emptyList())) {
+        for (Wsdl wsdl : getWsdls().getOrElse(Collections.emptyList())) {
             workQueue.submit(WsImportWorkAction.class, parameters -> {
-                parameters.getKeep().set(keep);
-                parameters.getExtension().set(extension);
-                parameters.getVerbose().set(verbose);
-                parameters.getQuiet().set(quiet);
-                parameters.getDebug().set(debug);
-                parameters.getXnocompile().set(xnocompile);
-                parameters.getXadditionalHeaders().set(xadditionalHeaders);
-                parameters.getXNoAddressingDatabinding().set(xNoAddressingDatabinding);
-                parameters.getXdebug().set(xdebug);
+                parameters.getKeep().set(getKeep());
+                parameters.getExtension().set(getExtension());
+                parameters.getVerbose().set(getVerbose());
+                parameters.getQuiet().set(getQuiet());
+                parameters.getDebug().set(getDebug());
+                parameters.getXnocompile().set(getXnocompile());
+                parameters.getXadditionalHeaders().set(getXadditionalHeaders());
+                parameters.getXNoAddressingDatabinding().set(getXNoAddressingDatabinding());
+                parameters.getXdebug().set(getXdebug());
 
-                parameters.getTarget().set(target);
-                parameters.getEncoding().set(encoding);
+                parameters.getTarget().set(getTarget());
+                parameters.getEncoding().set(getEncoding());
 
-                parameters.getWsdlSourceRoot().set(wsdlSourceRoot);
-                parameters.getGeneratedSourceRoot().set(generatedSourceRoot);
-                parameters.getGeneratedClassesRoot().set(generatedClassesRoot);
+                parameters.getWsdlSourceRoot().set(getWsdlSourceRoot());
+                parameters.getGeneratedSourceRoot().set(getGeneratedSourceRoot());
+                parameters.getGeneratedClassesRoot().set(getGeneratedClassesRoot());
                 parameters.getWsdl().set(wsdl);
-                parameters.getProjectRoot().set(projectDir);
+                parameters.getProjectRoot().set(getProjectDir());
             });
             // The order in which the wsdl's are processed is relevant.
             workQueue.await();
