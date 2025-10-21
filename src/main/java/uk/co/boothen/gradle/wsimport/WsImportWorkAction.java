@@ -27,6 +27,15 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * A work action implementation that executes WsImport2 tool to generate JAX-WS portable artifacts from WSDL files.
+ * This class handles the configuration and execution of the WsImport2 tool with various options like:
+ * - Source and destination directories for generated code
+ * - WSDL location and package configuration
+ * - Binding files processing
+ * - Various WsImport flags and parameters
+ * The class implements Gradle's WorkAction interface for parallel execution support.
+ */
 public abstract class WsImportWorkAction implements WorkAction<WsImportWorkParameters> {
 
     @Override
@@ -103,9 +112,26 @@ public abstract class WsImportWorkAction implements WorkAction<WsImportWorkParam
         wsImport2.execute();
     }
 
+
+    /**
+     * Resolves the list of binding files relative to the WSDL source root.
+     *
+     * @param wsdl           The WSDL configuration containing binding file paths
+     * @param wsdlSourceRoot The root directory or URL for WSDL and binding files
+     * @return A list of resolved File objects for the binding files
+     * @throws IllegalArgumentException if any binding file path is null or empty
+     */
     public List<File> bindingFiles(Wsdl wsdl, String wsdlSourceRoot) {
+        if (wsdl == null) {
+            throw new IllegalArgumentException("WSDL configuration cannot be null");
+        }
+        if (wsdlSourceRoot == null || wsdlSourceRoot.trim().isEmpty()) {
+            throw new IllegalArgumentException("WSDL source root cannot be null or empty");
+        }
+
         return wsdl.getBindingFiles()
                    .stream()
+                   .filter(binding -> binding != null && !binding.trim().isEmpty())
                    .map(binding -> new File(Util.mergePaths(wsdlSourceRoot, binding)))
                    .collect(Collectors.toList());
     }

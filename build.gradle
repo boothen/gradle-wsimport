@@ -1,5 +1,6 @@
 plugins {
-    id 'groovy-base'
+    id 'java'
+    id 'groovy'
     id "com.gradle.plugin-publish" version "1.2.0"
 }
 
@@ -9,14 +10,15 @@ repositories {
 
 dependencies {
     // Version is also defined in WsImportPlugin
-    implementation group: 'com.sun.xml.ws', name: 'jaxws-tools', version: '3.0.1'
-    implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
-    implementation group: 'jakarta.xml.ws', name: 'jakarta.xml.ws-api', version: '3.0.1'
-    implementation group: 'jakarta.jws', name: 'jakarta.jws-api', version: '3.0.0'
+    implementation "com.sun.xml.ws:jaxws-tools:${jaxwsToolsVersion}"
+    implementation "jakarta.xml.bind:jakarta.xml.bind-api:${jakartaXmlBindVersion}"
+    implementation "jakarta.xml.ws:jakarta.xml.ws-api:${jakartaXmlWsVersion}"
+    implementation "jakarta.jws:jakarta.jws-api:${jakartaJwsVersion}"
 
     implementation gradleApi()
 
-    testImplementation group: 'org.spockframework', name:'spock-core', version:'2.3-groovy-3.0'
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:${junitPlatformLauncherVersion}"
+    testImplementation "org.spockframework:spock-core:${spockVersion}"
 }
 
 group = "uk.co.boothen.gradle"
@@ -32,12 +34,20 @@ gradlePlugin {
             id = "uk.co.boothen.gradle.wsimport"
             implementationClass = "uk.co.boothen.gradle.wsimport.WsImportPlugin"
             displayName = "WsImport plugin"
-            description = "Yet another WsImport Gradle plugin - requires Java 11 and Gradle 6.0 or greater."
+            description = "Yet another WsImport Gradle plugin - requires Java 17 and Gradle 9.0 or greater."
             tags.addAll('wsimport')
 
         }
     }
 }
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "started", "passed", "skipped", "failed"
+    }
+}
+
 
 tasks.withType(JavaCompile) {
     sourceCompatibility = "${javacVersion}"

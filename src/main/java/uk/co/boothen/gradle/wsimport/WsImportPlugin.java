@@ -21,7 +21,6 @@ import org.gradle.api.UnknownTaskException;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.util.GradleVersion;
@@ -29,28 +28,35 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-public class WsImportPlugin implements Plugin<Project> {
+
+/**
+ * A Gradle plugin that provides wsimport task functionality for generating JAX-WS portable artifacts.
+ * This plugin adds configurations for JAX-WS tools, sets up source directories for generated code,
+ * and configures wsimport task with customizable options through the wsimport extension.
+ * Requires Gradle 9.0 or higher and the Java plugin to be applied.
+ */
+public class WsImportPlugin implements Plugin<@NotNull Project> {
 
     @Override
     public void apply(@NotNull Project project) {
 
-        if (GradleVersion.current().compareTo(GradleVersion.version("6.0")) < 0) {
+        if (GradleVersion.current().compareTo(GradleVersion.version("9.0")) < 0) {
             Logger logger = project.getLogger();
-            logger.error("Plugin requires Gradle 6.0 or greater.");
-            throw new IllegalStateException("Plugin requires Gradle 6.0 or greater.");
+            logger.error("Plugin requires Gradle 9.0 or greater.");
+            throw new IllegalStateException("Plugin requires Gradle 9.0 or greater.");
         }
 
         project.getExtensions().add("wsimport", WsImportPluginExtension.class);
 
         Configuration jaxWsTools = project.getConfigurations().create("jaxWsTools");
-        jaxWsTools.defaultDependencies(dependencies -> dependencies.add(project.getDependencies().create("com.sun.xml.ws:jaxws-tools:3.0.1")));
+        jaxWsTools.defaultDependencies(dependencies -> dependencies.add(project.getDependencies().create("com.sun.xml.ws:jaxws-tools:4.0.3")));
 
         project.afterEvaluate(action -> {
             WsImportPluginExtension wsImportPluginExtension = action.getExtensions().getByType(WsImportPluginExtension.class);
 
             if (wsImportPluginExtension.getIncludeDependencies()) {
-                project.getDependencies().add("implementation", "jakarta.xml.bind:jakarta.xml.bind-api:3.0.1");
-                project.getDependencies().add("implementation", "jakarta.xml.ws:jakarta.xml.ws-api:3.0.1");
+                project.getDependencies().add("implementation", "jakarta.xml.bind:jakarta.xml.bind-api:4.0.4");
+                project.getDependencies().add("implementation", "jakarta.xml.ws:jakarta.xml.ws-api:4.0.2");
                 project.getDependencies().add("implementation", "jakarta.jws:jakarta.jws-api:3.0.0");
             }
 
@@ -63,17 +69,13 @@ public class WsImportPlugin implements Plugin<Project> {
             String wsdlSourceRoot = wsImportPluginExtension.getWsdlSourceRoot().matches("(?i)^(http|https)://.*") ? wsImportPluginExtension.getWsdlSourceRoot()
                                                                                                                   : Util.mergePaths(project.getProjectDir().getAbsolutePath(),
                                                                                                                                     wsImportPluginExtension.getWsdlSourceRoot());
-            File generatedSourceRoot = Util.mergeFile(project.getBuildDir(), wsImportPluginExtension.getGeneratedSourceRoot());
-            File generatedClassesRoot = Util.mergeFile(project.getBuildDir(), wsImportPluginExtension.getGeneratedClassesRoot());
 
-            SourceSet javaMain;
-            if (GradleVersion.current().compareTo(GradleVersion.version("7.1")) < 0) {
-                JavaPluginConvention javaPluginConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
-                javaMain = javaPluginConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-            } else {
-                JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
-                javaMain = javaPluginExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-            }
+            File buildDir = project.getLayout().getBuildDirectory().getAsFile().get();
+            File generatedSourceRoot = Util.mergeFile(buildDir, wsImportPluginExtension.getGeneratedSourceRoot());
+            File generatedClassesRoot = Util.mergeFile(buildDir, wsImportPluginExtension.getGeneratedClassesRoot());
+
+            JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
+            SourceSet javaMain = javaPluginExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
             javaMain.getJava().srcDir(generatedSourceRoot);
 
             WsImportTask wsImport = project.getTasks().register("wsImport", WsImportTask.class, wsImportTask -> {
