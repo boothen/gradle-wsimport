@@ -28,12 +28,39 @@ import java.util.List;
  */
 public class Wsdl implements Serializable {
 
+    /**
+     * The path to the WSDL file to be processed
+     */
     private String file;
+
+    /**
+     * The target package name for generated classes. Defaults to empty string.
+     */
     private String packageName = "";
+
+    /**
+     * The URL location where the WSDL will be available at runtime. Defaults to empty string.
+     */
     private String wsdlLocation = "";
+
+    /**
+     * List of JAXB/JAX-WS binding files to customize code generation.
+     */
     private List<String> bindingFiles = new ArrayList<>();
+
+    /**
+     * List of XJC (XML to Java Compiler) arguments for customizing JAXB code generation.
+     */
     private List<String> xjcargs = new ArrayList<>();
+
+    /**
+     * List of additional arguments to pass to the wsimport tool.
+     */
     private List<String> extraArgs = new ArrayList<>();
+
+    /**
+     * The path to the XML catalog file for resolving external entities. Defaults to empty string.
+     */
     private String catalog = "";
 
     /**
